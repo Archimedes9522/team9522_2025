@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 14.178000566700135,
-        "y": 5.511710836545781
+        "x": 12.989637201908288,
+        "y": 5.5
       },
       "isLocked": false,
       "linkedName": "CenterRed"
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": -179.1980033232417,
     "velocity": 0
   },
   "useDefaultConstraints": true
