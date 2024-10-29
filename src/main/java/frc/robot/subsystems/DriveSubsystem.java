@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
 import java.util.Optional;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -77,16 +77,15 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
-        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting
-        // pose)
+        this::resetOdometry,
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE
         // ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in
             // your
             // Constants class
-            new PIDConstants(AutoConstants.kPXController, 0, 0),
-            new PIDConstants(AutoConstants.kPThetaController, 0, 0),
+            new PIDConstants(5.0, 0, 0),
+            new PIDConstants(5.0, 0, 0),
             Constants.DriveConstants.kMaxSpeedMetersPerSecond,
             0.4, // max speed in m/s
             new ReplanningConfig()),
@@ -102,6 +101,15 @@ public class DriveSubsystem extends SubsystemBase {
           return false;
         },
         this);
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
     PathPlannerLogging.setLogCurrentPoseCallback(
         pose -> Logger.recordOutput("Chassis/targetPose", pose));
   }
@@ -223,7 +231,7 @@ public class DriveSubsystem extends SubsystemBase {
     setModuleStates(swerveModuleStates);
   }
 
-  private ChassisSpeeds getRobotRelativeSpeeds() {
+  public ChassisSpeeds getRobotRelativeSpeeds() {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
   }
 

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
@@ -99,6 +100,17 @@ public class MAXSwerveModule {
     m_drivingSparkMax.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
     m_turningSparkMax.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
 
+    m_drivingEncoder.setAverageDepth(2);
+    m_drivingEncoder.setMeasurementPeriod(16);
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 20);
+
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000);
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000);
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
+    m_drivingSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 1000);
+    m_drivingSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 1000);
+    m_drivingSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 1000);
+
     // Save the SPARK MAX configurations. If a SPARK MAX browns out during
     // operation, it will maintain the above configurations.
     m_drivingSparkMax.burnFlash();
@@ -159,10 +171,5 @@ public class MAXSwerveModule {
         optimizedDesiredState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
 
     m_desiredState = desiredState;
-  }
-
-  /** Zeroes all the SwerveModule encoders. */
-  public void resetEncoders() {
-    m_drivingEncoder.setPosition(0);
   }
 }

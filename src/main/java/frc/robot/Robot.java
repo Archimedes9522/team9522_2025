@@ -1,7 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
@@ -9,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.DriveSubsystem;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -21,7 +18,6 @@ import org.littletonrobotics.urcl.URCL;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
-
   private final Field2d m_field = new Field2d();
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
@@ -72,23 +68,11 @@ public class Robot extends LoggedRobot {
   }
 
   private void updateSmartDashboard() {
-    boolean isSetXButtonPressed =
-        m_robotContainer.getDriverController().getRawButton(Constants.kSetXButton);
+    boolean isSetXButtonPressed = m_robotContainer.isSetXButtonPressed();
     SmartDashboard.putBoolean("SetX", isSetXButtonPressed);
     // Update PDH voltage
     SmartDashboard.putNumber("PDH Voltage", m_pdh.getVoltage());
-    // Update robot velocity
-    DriveSubsystem driveSubsystem = m_robotContainer.getDriveSubsystem();
-    double robotVelocity = driveSubsystem.getRobotVelocity();
-    SmartDashboard.putNumber("Robot Velocity", robotVelocity);
     SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
-
-    Pose2d currentPose = driveSubsystem.getPose();
-    double transformedX = -currentPose.getY();
-    double transformedY = -currentPose.getX();
-    Rotation2d transformedRotation = currentPose.getRotation();
-    Pose2d transformedPose = new Pose2d(transformedX, transformedY, transformedRotation);
-    m_field.setRobotPose(transformedPose);
   }
 
   private void initializeLogging() {

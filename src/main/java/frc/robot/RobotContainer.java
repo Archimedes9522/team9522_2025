@@ -21,6 +21,10 @@ public class RobotContainer {
   private final XboxController m_driverController =
       new XboxController(OIConstants.kDriverControllerPort);
 
+  public boolean isSetXButtonPressed() {
+    return m_driverController.getRawButton(Button.kR1.value);
+  }
+
   public RobotContainer() {
     configureButtonBindings();
 
