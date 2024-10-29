@@ -18,7 +18,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final LoggedDashboardChooser<Command> autoChooser;
   private final XboxController m_driverController =
       new XboxController(OIConstants.kDriverControllerPort);

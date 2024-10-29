@@ -25,7 +25,6 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     initializeLogging();
     m_robotContainer = new RobotContainer();
-    SmartDashboard.putData("Field", m_field);
     setupSmartDashboard();
   }
 
@@ -64,6 +63,7 @@ public class Robot extends LoggedRobot {
   public void teleopExit() {}
 
   public void setupSmartDashboard() {
+    SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("PDH", m_pdh);
   }
 
@@ -73,6 +73,8 @@ public class Robot extends LoggedRobot {
     // Update PDH voltage
     SmartDashboard.putNumber("PDH Voltage", m_pdh.getVoltage());
     SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
+    SmartDashboard.putNumber("Robot Velocity", m_robotContainer.m_robotDrive.getVelocity());
+    m_field.setRobotPose(m_robotContainer.m_robotDrive.getPose());
   }
 
   private void initializeLogging() {
