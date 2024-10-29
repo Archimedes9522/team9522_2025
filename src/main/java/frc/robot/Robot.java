@@ -86,6 +86,8 @@ public class Robot extends LoggedRobot {
       // Log to USB & Network Tables
       Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
       Logger.addDataReceiver(new NT4Publisher());
+    } else if (isSimulation()) {
+      Logger.addDataReceiver(new NT4Publisher());
     } else {
       // Replay from log and save to file
       setUseTiming(false);
