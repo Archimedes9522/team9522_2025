@@ -73,7 +73,7 @@ public class Robot extends LoggedRobot {
     // Update PDH voltage
     SmartDashboard.putNumber("PDH Voltage", m_pdh.getVoltage());
     SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
-    SmartDashboard.putNumber("Robot Velocity", m_robotContainer.m_robotDrive.getVelocity());
+    SmartDashboard.putNumber("Robot Velocity", m_robotContainer.m_robotDrive.getRobotVelocity());
     m_field.setRobotPose(m_robotContainer.m_robotDrive.getPose());
   }
 

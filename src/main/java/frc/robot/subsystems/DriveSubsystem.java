@@ -233,8 +233,15 @@ public class DriveSubsystem extends SubsystemBase {
     setModuleStates(swerveModuleStates);
   }
 
-  public ChassisSpeeds getRobotRelativeSpeeds() {
+  private ChassisSpeeds getRobotRelativeSpeeds() {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+  }
+
+  public double getRobotVelocity() {
+    ChassisSpeeds speeds = getRobotRelativeSpeeds();
+    return Math.sqrt(
+        speeds.vxMetersPerSecond * speeds.vxMetersPerSecond
+            + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond);
   }
 
   @AutoLogOutput(key = "Chassis/ActualStates")
