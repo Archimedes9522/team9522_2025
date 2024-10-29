@@ -7,6 +7,24 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+
+import org.littletonrobotics.akit.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.urcl.URCL;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import java.util.stream.Collectors;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,7 +33,7 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
     private Command m_autonomousCommand;
     private RobotContainer m_robotContainer;
     private final Field2d m_field = new Field2d();
@@ -23,8 +41,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        initializeLogging();
         m_robotContainer = new RobotContainer();
-        CameraServer.startAutomaticCapture();
         SmartDashboard.putData("Field", m_field);
         setupSmartDashboard();
     }
@@ -64,8 +82,6 @@ public class Robot extends TimedRobot {
     public void teleopExit() {}
 
     public void setupSmartDashboard() {
-        DriveSubsystem driveSubsystem = m_robotContainer.getDriveSubsystem();
-        SmartDashboard.putData("Swerve Drive", createSwerveDriveSendable(driveSubsystem));
         SmartDashboard.putData("PDH", m_pdh);
     }
 
@@ -88,19 +104,26 @@ public class Robot extends TimedRobot {
         m_field.setRobotPose(transformedPose);
     }
 
-    private Sendable createSwerveDriveSendable(DriveSubsystem driveSubsystem) {
-        return new Sendable() {
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.setSmartDashboardType("SwerveDrive");
-                for (int i = 0; i < 4; i++) {
-                    final int index = i;
-                    builder.addDoubleProperty("Module " + index + " Angle", 
-                        () -> driveSubsystem.getModuleStates()[index].angle.getRadians(), null);
-                    builder.addDoubleProperty("Module " + index + " Velocity", 
-                        () -> driveSubsystem.getModuleStates()[index].speedMetersPerSecond, null);
-                }
-            }
-        };
+    private void initializeLogging() {
+        Logger.recordMetadata("Project Name", BuildConstants.MAVEN_NAME);
+        Logger.recordMetadata("Branch Name", BuildConstants.GIT_BRANCH);
+        Logger.recordMetadata("Commit Hash (Short)", BuildConstants.GIT_SHA.substring(0, 8));
+        Logger.recordMetadata("Commit Hash (Full)", BuildConstants.GIT_SHA);
+        Logger.recordMetadata("Build Time", BuildConstants.BUILD_DATE);
+
+        if (isReal()) {
+            // Log to USB & Network Tables
+            Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
+            Logger.addDataReceiver(new NT4Publisher());
+        } else {
+            // Replay from log and save to file
+            setUseTiming(false);
+            String logPath = LogFileUtil.findReplayLog();
+            Logger.setReplaySource(new WPILOGReader(logPath));
+            Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+
+        }
+        Logger.registerURCL(URCL.startExternal());
+        Logger.start();
     }
 }
