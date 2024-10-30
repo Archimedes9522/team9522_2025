@@ -1,12 +1,16 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.utils.Alert;
+import frc.utils.Alert.AlertType;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -20,6 +24,27 @@ public class Robot extends LoggedRobot {
   private RobotContainer m_robotContainer;
   private final Field2d m_field = new Field2d();
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
+  private static final double canErrorTimeThreshold = 0.5; // Seconds to disable alert
+  private static final double lowBatteryVoltage = 10.0;
+  private static final double lowBatteryDisabledTime = 1.5;
+  private boolean autoMessagePrinted;
+  private boolean batteryNameWritten = false;
+  private final Timer canErrorTimer = new Timer();
+  private final Timer canErrorTimerInitial = new Timer();
+  private final Timer disabledTimer = new Timer();
+
+  private final Alert logNoFileAlert =
+      new Alert("No log path set for current robot. Data will NOT be logged.", AlertType.WARNING);
+  private final Alert logReceiverQueueAlert =
+      new Alert("Logging queue exceeded capacity, data will NOT be logged.", AlertType.ERROR);
+  private final Alert sameBatteryAlert =
+      new Alert("The battery has not been changed since the last match.", AlertType.WARNING);
+  private final Alert canErrorAlert =
+      new Alert("CAN errors detected, robot may not be controllable.", AlertType.ERROR);
+  private final Alert lowBatteryAlert =
+      new Alert(
+          "Battery voltage is very low, consider turning off the robot or replacing the battery.",
+          AlertType.WARNING);
 
   @Override
   public void robotInit() {
@@ -32,6 +57,24 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     updateSmartDashboard();
+
+    // Update CAN error alert
+    var canStatus = RobotController.getCANStatus();
+    if (canStatus.receiveErrorCount > 0 || canStatus.transmitErrorCount > 0) {
+      canErrorTimer.reset();
+    }
+    canErrorAlert.set(
+        !canErrorTimer.hasElapsed(canErrorTimeThreshold)
+            && canErrorTimerInitial.hasElapsed(canErrorTimeThreshold));
+
+    // Update low battery alert
+    if (DriverStation.isEnabled()) {
+      disabledTimer.reset();
+    }
+    if (RobotController.getBatteryVoltage() < lowBatteryVoltage
+        && disabledTimer.hasElapsed(lowBatteryDisabledTime)) {
+      lowBatteryAlert.set(true);
+    }
   }
 
   @Override
