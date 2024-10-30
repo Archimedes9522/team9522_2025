@@ -22,6 +22,7 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -77,6 +78,35 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+
+    SmartDashboard.putData(
+        "Swerve",
+        builder -> {
+          builder.setSmartDashboardType("SwerveDrive");
+
+          builder.addDoubleProperty(
+              "Front Left Angle", () -> m_frontLeft.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Front Left Velocity", () -> m_frontLeft.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty(
+              "Front Right Angle", () -> m_frontRight.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Front Right Velocity", () -> m_frontRight.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty(
+              "Back Left Angle", () -> m_rearLeft.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Back Left Velocity", () -> m_rearLeft.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty(
+              "Back Right Angle", () -> m_rearRight.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Back Right Velocity", () -> m_rearRight.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
+        });
+
     AutoBuilder.configureHolonomic(
         this::getPose, // Robot pose supplier
         this::resetOdometry,
@@ -245,7 +275,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   @AutoLogOutput(key = "Chassis/ActualStates")
-  private SwerveModuleState[] getModuleStates() {
+  public SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[] {
       m_frontLeft.getState(), m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState()
     };
