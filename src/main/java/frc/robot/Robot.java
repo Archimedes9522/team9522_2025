@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,7 +35,7 @@ public class Robot extends LoggedRobot {
   public void robotInit() {
     initializeLogging();
     m_robotContainer = new RobotContainer();
-
+    LiveWindow.disableTelemetry(m_pdh);
     setupSmartDashboard();
   }
 
@@ -80,9 +81,8 @@ public class Robot extends LoggedRobot {
   private void updateSmartDashboard() {
     boolean isSetXButtonPressed = m_robotContainer.isSetXButtonPressed();
     SmartDashboard.putBoolean("SetX", isSetXButtonPressed);
-    // Update PDH voltage
-    SmartDashboard.putNumber("PDH Voltage", m_pdh.getVoltage());
     SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
+    SmartDashboard.putNumber("PDH Voltage", m_pdh.getVoltage());
     SmartDashboard.putNumber("Robot Velocity", m_robotContainer.m_robotDrive.getRobotVelocity());
     m_field.setRobotPose(m_robotContainer.m_robotDrive.getPose());
     /*PathPlannerLogging.setLogActivePathCallback(
