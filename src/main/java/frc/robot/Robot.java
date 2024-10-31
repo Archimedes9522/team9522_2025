@@ -129,7 +129,6 @@ public class Robot extends LoggedRobot {
 
     if (isReal()) {
       // Log to USB & Network Tables
-      Logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
       Logger.addDataReceiver(new NT4Publisher());
     } else if (isSimulation()) {
       Logger.addDataReceiver(new NT4Publisher());
