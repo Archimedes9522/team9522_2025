@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,9 +28,10 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureButtonBindings();
-    UsbCamera usbcamera = CameraServer.startAutomaticCapture();
+    CameraServer.startAutomaticCapture();
     // usbcamera.setResolution(320, 240);
-
+    autoChooser =
+        new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser("CenterTaxi"));
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -47,7 +47,6 @@ public class RobotContainer {
                     true,
                     true),
             m_robotDrive));
-    autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
   }
 
   private void configureButtonBindings() {
