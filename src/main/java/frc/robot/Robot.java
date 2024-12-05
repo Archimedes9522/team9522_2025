@@ -74,6 +74,7 @@ public class Robot extends LoggedRobot {
   public void setupSmartDashboard() {
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("PDH", m_pdh);
+    SmartDashboard.putBoolean("Reset Pose", false);
   }
 
   private void updateSmartDashboard() {
@@ -82,12 +83,19 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
     SmartDashboard.putNumber("PDH Voltage", m_pdh.getVoltage());
     SmartDashboard.putNumber("Robot Velocity", m_robotContainer.m_robotDrive.getRobotVelocity());
-    m_field.setRobotPose(m_robotContainer.m_robotDrive.getPose());
-    /*PathPlannerLogging.setLogActivePathCallback(
-    (poses) -> {
-      // Do whatever you want with the poses here
-      m_field.getObject("path").setPoses(poses);
-    });*/
+
+    // Update both Field2d and Swerve widget with the same pose
+    var robotPose = m_robotContainer.m_robotDrive.getPose();
+    m_field.setRobotPose(robotPose);
+    SmartDashboard.putNumber("Swerve/Robot X", robotPose.getX());
+    SmartDashboard.putNumber("Swerve/Robot Y", robotPose.getY());
+    SmartDashboard.putNumber("Swerve/Robot Angle", robotPose.getRotation().getRadians());
+
+    // Handle pose reset button
+    if (SmartDashboard.getBoolean("Reset Pose", false)) {
+      m_robotContainer.m_robotDrive.resetPose();
+      SmartDashboard.putBoolean("Reset Pose", false); // Reset the button
+    }
   }
 
   @Override

@@ -330,4 +330,8 @@ public class DriveSubsystem extends SubsystemBase {
   private Rotation2d getHeading() {
     return Rotation2d.fromDegrees(m_gyro.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0));
   }
+
+  public void resetPose() {
+    resetOdometry(new Pose2d());
+  }
 }
