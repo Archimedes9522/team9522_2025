@@ -5,7 +5,7 @@
       "x": 1.4,
       "y": 5.5
     },
-    "rotation": 0.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CenterTaxi"
+            "pathName": "Blue_Spkr_1N_Spkr"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue_Spkr_BckStge"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue_Spkr_CenStage"
           }
         }
       ]

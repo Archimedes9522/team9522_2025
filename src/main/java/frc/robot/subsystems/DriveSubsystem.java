@@ -78,9 +78,12 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    // Reset gyro and odometry on startup
+    zeroHeading();
+    resetPose();
 
     SmartDashboard.putData(
-        "Swerve",
+        "Swerve Visualizer",
         builder -> {
           builder.setSmartDashboardType("SwerveDrive");
 
@@ -104,6 +107,7 @@ public class DriveSubsystem extends SubsystemBase {
           builder.addDoubleProperty(
               "Back Right Velocity", () -> m_rearRight.getState().speedMetersPerSecond, null);
 
+          // Match rotation direction with Field2d widget
           builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
         });
 

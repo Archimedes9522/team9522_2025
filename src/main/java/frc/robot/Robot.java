@@ -87,6 +87,8 @@ public class Robot extends LoggedRobot {
     // Update both Field2d and Swerve widget with the same pose
     var robotPose = m_robotContainer.m_robotDrive.getPose();
     m_field.setRobotPose(robotPose);
+
+    // Keep rotation consistent with Field2d widget
     SmartDashboard.putNumber("Swerve/Robot X", robotPose.getX());
     SmartDashboard.putNumber("Swerve/Robot Y", robotPose.getY());
     SmartDashboard.putNumber("Swerve/Robot Angle", robotPose.getRotation().getRadians());
