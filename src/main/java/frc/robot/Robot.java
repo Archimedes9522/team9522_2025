@@ -27,7 +27,7 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private final Field2d m_field = new Field2d();
-  private String autoName, newAutoName;
+  public String autoName, newAutoName;
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
   @Override
@@ -102,7 +102,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    newAutoName = m_robotContainer.getAutonomousCommand().getName();
+    /*newAutoName = m_robotContainer.getAutonomousCommand().getName();
     if (autoName != newAutoName) {
       autoName = newAutoName;
       if (AutoBuilder.getAllAutoNames().contains(autoName)) {
@@ -120,7 +120,7 @@ public class Robot extends LoggedRobot {
         }
         m_field.getObject("path").setPoses(poses);
       }
-    }
+    }*/
   }
 
   private void initializeLogging() {
