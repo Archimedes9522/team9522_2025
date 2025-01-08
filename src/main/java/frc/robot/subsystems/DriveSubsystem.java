@@ -73,6 +73,35 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+
+    SmartDashboard.putData(
+        "Swerve",
+        builder -> {
+          builder.setSmartDashboardType("SwerveDrive");
+
+          builder.addDoubleProperty(
+              "Front Left Angle", () -> m_frontLeft.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Front Left Velocity", () -> m_frontLeft.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty(
+              "Front Right Angle", () -> m_frontRight.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Front Right Velocity", () -> m_frontRight.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty(
+              "Back Left Angle", () -> m_rearLeft.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Back Left Velocity", () -> m_rearLeft.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty(
+              "Back Right Angle", () -> m_rearRight.getPosition().angle.getRadians(), null);
+          builder.addDoubleProperty(
+              "Back Right Velocity", () -> m_rearRight.getState().speedMetersPerSecond, null);
+
+          builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
+        });
+
     RobotConfig config;
     try{
       config = RobotConfig.fromGUISettings();
@@ -195,6 +224,16 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void driveRobotRelative(ChassisSpeeds speeds) {
     drive(speeds, false);
+  }
+
+  private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
+    if (fieldRelative)
+      speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
+    speeds = ChassisSpeeds.discretize(speeds, LoggedRobot.defaultPeriodSecs);
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    setModuleStates(swerveModuleStates);
   }
 
   /**
