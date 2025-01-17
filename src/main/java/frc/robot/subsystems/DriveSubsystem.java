@@ -4,16 +4,13 @@
 
 package frc.robot.subsystems;
 
+import java.lang.Math;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -25,15 +22,9 @@ import com.studica.frc.AHRS;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.Configs;
-import java.util.Optional;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -80,35 +71,27 @@ public class DriveSubsystem extends SubsystemBase {
           builder.setSmartDashboardType("SwerveDrive");
 
           builder.addDoubleProperty(
-              "Front Left Angle", () -> m_frontLeft.getPosition().angle.getRadians(), null);
+              "Front Left Angle", () -> m_frontLeft.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Front Left Velocity", () -> m_frontLeft.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Front Right Angle", () -> m_frontRight.getPosition().angle.getRadians(), null);
+              "Front Right Angle", () -> m_frontRight.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Front Right Velocity", () -> m_frontRight.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Back Left Angle", () -> m_rearLeft.getPosition().angle.getRadians(), null);
+              "Back Left Angle", () -> m_rearLeft.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Back Left Velocity", () -> m_rearLeft.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Back Right Angle", () -> m_rearRight.getPosition().angle.getRadians(), null);
+              "Back Right Angle", () -> m_rearRight.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Back Right Velocity", () -> m_rearRight.getState().speedMetersPerSecond, null);
 
-          builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
+          builder.addDoubleProperty("Robot Angle", () -> getHeading(), null);
         });
-
-    RobotConfig config;
-    try{
-      config = RobotConfig.fromGUISettings();
-    } catch (Exception e) {
-      // Handle exception as needed
-      e.printStackTrace();
-    }
 
     AutoBuilder.configure(
             this::getPose, // Robot pose supplier
@@ -119,7 +102,7 @@ public class DriveSubsystem extends SubsystemBase {
                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
             ),
-            config, // The robot configuration
+            Constants.AutoConstants.config, // The robot configuration
             () -> {
               // Boolean supplier that controls when the path will be mirrored for the red alliance
               // This will flip the path being followed to the red side of the field.
@@ -223,10 +206,10 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void driveRobotRelative(ChassisSpeeds speeds) {
-    drive(speeds, false);
+    drivePathPlanner(speeds, false);
   }
 
-  private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
+  private void drivePathPlanner(ChassisSpeeds speeds, boolean fieldRelative) {
     if (fieldRelative)
       speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
     speeds = ChassisSpeeds.discretize(speeds, LoggedRobot.defaultPeriodSecs);
@@ -271,10 +254,6 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
-  }
-
-  public void resetPose() {
-    resetOdometry(new Pose2d());
   }
 
   /**

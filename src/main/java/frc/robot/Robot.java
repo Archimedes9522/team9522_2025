@@ -1,29 +1,27 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.littletonrobotics.junction.LogFileUtil;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.littletonrobotics.urcl.URCL;
 
-public class Robot extends LoggedRobot {
+import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
+
+public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private final Field2d m_field = new Field2d();
@@ -88,39 +86,46 @@ public class Robot extends LoggedRobot {
     var robotPose = m_robotContainer.m_robotDrive.getPose();
     m_field.setRobotPose(robotPose);
 
-    // Keep rotation consistent with Field2d widget
-    SmartDashboard.putNumber("Swerve/Robot X", robotPose.getX());
-    SmartDashboard.putNumber("Swerve/Robot Y", robotPose.getY());
-    SmartDashboard.putNumber("Swerve/Robot Angle", robotPose.getRotation().getRadians());
-
     // Handle pose reset button
     if (SmartDashboard.getBoolean("Reset Pose", false)) {
-      m_robotContainer.m_robotDrive.resetPose();
+      m_robotContainer.m_robotDrive.zeroHeading();
+      m_robotContainer.m_robotDrive.resetOdometry(new Pose2d());
       SmartDashboard.putBoolean("Reset Pose", false); // Reset the button
     }
   }
 
   @Override
   public void disabledPeriodic() {
-    /*newAutoName = m_robotContainer.getAutonomousCommand().getName();
-    if (autoName != newAutoName) {
-      autoName = newAutoName;
-      if (AutoBuilder.getAllAutoNames().contains(autoName)) {
-        System.out.println("Displaying " + autoName);
-        List<PathPlannerPath> pathPlannerPaths = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
-        List<Pose2d> poses = new ArrayList<>();
-        for (PathPlannerPath path : pathPlannerPaths) {
-          poses.addAll(
-              path.getAllPathPoints().stream()
-                  .map(
-                      point ->
-                          new Pose2d(
-                              point.position.getX(), point.position.getY(), new Rotation2d()))
-                  .collect(Collectors.toList()));
-        }
-        m_field.getObject("path").setPoses(poses);
-      }
-    }*/
+    updateAutoName();
+    List<PathPlannerPath> pathPlannerPaths = null;
+try {
+  pathPlannerPaths = getPathPlannerPaths(autoName);
+} catch (IOException | ParseException e) {
+  e.printStackTrace();
+}
+if (pathPlannerPaths != null) {
+  List<Pose2d> poses = extractPosesFromPaths(pathPlannerPaths);
+  m_field.getObject("path").setPoses(poses);
+}
+}
+
+  private void updateAutoName() {
+    newAutoName = m_robotContainer.getAutonomousCommand().getName();
+  }
+
+  private List<PathPlannerPath> getPathPlannerPaths(String autoName) throws IOException, ParseException {
+    return PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+  }
+
+  private List<Pose2d> extractPosesFromPaths(List<PathPlannerPath> pathPlannerPaths) {
+    List<Pose2d> poses = new ArrayList<>();
+    for (PathPlannerPath path : pathPlannerPaths) {
+      poses.addAll(
+          path.getAllPathPoints().stream()
+              .map(point -> new Pose2d(point.position.getX(), point.position.getY(), new Rotation2d()))
+              .collect(Collectors.toList()));
+    }
+    return poses;
   }
 
   private void initializeLogging() {
@@ -129,20 +134,5 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("Commit Hash (Short)", BuildConstants.GIT_SHA.substring(0, 8));
     Logger.recordMetadata("Commit Hash (Full)", BuildConstants.GIT_SHA);
     Logger.recordMetadata("Build Time", BuildConstants.BUILD_DATE);
-
-    if (isReal()) {
-      // Log to USB & Network Tables
-      Logger.addDataReceiver(new NT4Publisher());
-    } else if (isSimulation()) {
-      Logger.addDataReceiver(new NT4Publisher());
-    } else {
-      // Replay from log and save to file
-      setUseTiming(false);
-      String logPath = LogFileUtil.findReplayLog();
-      Logger.setReplaySource(new WPILOGReader(logPath));
-      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-    }
-    Logger.registerURCL(URCL.startExternal());
-    Logger.start();
   }
 }

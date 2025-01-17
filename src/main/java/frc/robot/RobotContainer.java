@@ -14,11 +14,12 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   public final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final LoggedDashboardChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
   private final XboxController m_driverController =
       new XboxController(OIConstants.kDriverControllerPort);
 
@@ -30,8 +31,9 @@ public class RobotContainer {
     configureButtonBindings();
     CameraServer.startAutomaticCapture();
     // usbcamera.setResolution(320, 240);
-    autoChooser =
-        new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser("CenterTaxi"));
+    autoChooser = AutoBuilder.buildAutoChooser("None");
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -54,6 +56,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return autoChooser.getSelected();
   }
 }
