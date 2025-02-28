@@ -5,19 +5,19 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 
@@ -76,8 +76,6 @@ public class Robot extends TimedRobot {
   }
 
   private void updateSmartDashboard() {
-    boolean isSetXButtonPressed = m_robotContainer.isSetXButtonPressed();
-    SmartDashboard.putBoolean("SetX", isSetXButtonPressed);
     SmartDashboard.putNumber("Match Time", Timer.getMatchTime());
     SmartDashboard.putNumber("PDH Voltage", m_pdh.getVoltage());
     SmartDashboard.putNumber("Robot Velocity", m_robotContainer.m_robotDrive.getRobotVelocity());
@@ -88,7 +86,7 @@ public class Robot extends TimedRobot {
 
     // Handle pose reset button
     if (SmartDashboard.getBoolean("Reset Pose", false)) {
-      m_robotContainer.m_robotDrive.zeroHeading();
+      m_robotContainer.m_robotDrive.zeroHeadingCommand();
       m_robotContainer.m_robotDrive.resetOdometry(new Pose2d());
       SmartDashboard.putBoolean("Reset Pose", false); // Reset the button
     }
@@ -98,23 +96,32 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     updateAutoName();
     List<PathPlannerPath> pathPlannerPaths = null;
-try {
-  pathPlannerPaths = getPathPlannerPaths(autoName);
-} catch (IOException | ParseException e) {
-  e.printStackTrace();
-}
-if (pathPlannerPaths != null) {
-  List<Pose2d> poses = extractPosesFromPaths(pathPlannerPaths);
-  m_field.getObject("path").setPoses(poses);
-}
-}
+    try {
+      pathPlannerPaths = getPathPlannerPaths(autoName);
+    } catch (IOException | ParseException e) {
+      e.printStackTrace();
+    }
+    if (pathPlannerPaths != null) {
+      List<Pose2d> poses = extractPosesFromPaths(pathPlannerPaths);
+      m_field.getObject("path").setPoses(poses);
+    }
+  }
 
   private void updateAutoName() {
     newAutoName = m_robotContainer.getAutonomousCommand().getName();
   }
 
-  private List<PathPlannerPath> getPathPlannerPaths(String autoName) throws IOException, ParseException {
+  private List<PathPlannerPath> getPathPlannerPaths(String autoName)
+      throws IOException, ParseException {
     return PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // SimBattery estimates loaded battery voltages
+    RoboRioSim.setVInVoltage(
+        BatterySim.calculateDefaultBatteryLoadedVoltage(
+            m_robotContainer.getSimulationTotalCurrentDraw()));
   }
 
   private List<Pose2d> extractPosesFromPaths(List<PathPlannerPath> pathPlannerPaths) {
@@ -122,7 +129,9 @@ if (pathPlannerPaths != null) {
     for (PathPlannerPath path : pathPlannerPaths) {
       poses.addAll(
           path.getAllPathPoints().stream()
-              .map(point -> new Pose2d(point.position.getX(), point.position.getY(), new Rotation2d()))
+              .map(
+                  point ->
+                      new Pose2d(point.position.getX(), point.position.getY(), new Rotation2d()))
               .collect(Collectors.toList()));
     }
     return poses;
@@ -134,5 +143,11 @@ if (pathPlannerPaths != null) {
     Logger.recordMetadata("Commit Hash (Short)", BuildConstants.GIT_SHA.substring(0, 8));
     Logger.recordMetadata("Commit Hash (Full)", BuildConstants.GIT_SHA);
     Logger.recordMetadata("Build Time", BuildConstants.BUILD_DATE);
+  }
+
+  @Override
+  public void testInit() {
+    // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().cancelAll();
   }
 }
