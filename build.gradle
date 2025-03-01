@@ -115,7 +115,6 @@ spotless {
             exclude '**/build/**', '**/build-*/**', '**/bin/**'
         }
         toggleOffOn()
-        cleanthat()
         googleJavaFormat()
         removeUnusedImports()
         trimTrailingWhitespace()
