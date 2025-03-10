@@ -1,7 +1,9 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.studica.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -23,9 +25,10 @@ import org.littletonrobotics.junction.Logger;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
   private RobotContainer m_robotContainer;
   private final Field2d m_field = new Field2d();
-  public String autoName, newAutoName;
+  private String autoName, newAutoName;
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
 
   @Override
@@ -73,6 +76,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("PDH", m_pdh);
     SmartDashboard.putBoolean("Reset Pose", false);
+    SmartDashboard.putNumber("Gyro angle", m_gyro.getAngle());
+    SmartDashboard.putNumber("Gyro pitch", m_gyro.getPitch());
+    SmartDashboard.putNumber("Gyro roll", m_gyro.getRoll());
   }
 
   private void updateSmartDashboard() {
@@ -90,30 +96,38 @@ public class Robot extends TimedRobot {
       m_robotContainer.m_robotDrive.resetOdometry(new Pose2d());
       SmartDashboard.putBoolean("Reset Pose", false); // Reset the button
     }
+
+    SmartDashboard.putNumber("Gyro angle", m_gyro.getAngle());
+    SmartDashboard.putNumber("Gyro pitch", m_gyro.getPitch());
+    SmartDashboard.putNumber("Gyro roll", m_gyro.getRoll());
   }
 
   @Override
   public void disabledPeriodic() {
-    updateAutoName();
-    List<PathPlannerPath> pathPlannerPaths = null;
-    try {
-      pathPlannerPaths = getPathPlannerPaths(autoName);
-    } catch (IOException | ParseException e) {
-      e.printStackTrace();
-    }
-    if (pathPlannerPaths != null) {
-      List<Pose2d> poses = extractPosesFromPaths(pathPlannerPaths);
-      m_field.getObject("path").setPoses(poses);
-    }
-  }
-
-  private void updateAutoName() {
     newAutoName = m_robotContainer.getAutonomousCommand().getName();
-  }
-
-  private List<PathPlannerPath> getPathPlannerPaths(String autoName)
-      throws IOException, ParseException {
-    return PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+    if (autoName != newAutoName) {
+      autoName = newAutoName;
+      if (AutoBuilder.getAllAutoNames().contains(autoName)) {
+        System.out.println("Displaying " + autoName);
+        try {
+          List<PathPlannerPath> pathPlannerPaths =
+              PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+          List<Pose2d> poses = new ArrayList<>();
+          for (PathPlannerPath path : pathPlannerPaths) {
+            poses.addAll(
+                path.getAllPathPoints().stream()
+                    .map(
+                        point ->
+                            new Pose2d(
+                                point.position.getX(), point.position.getY(), new Rotation2d()))
+                    .collect(Collectors.toList()));
+          }
+          m_field.getObject("path").setPoses(poses);
+        } catch (IOException | ParseException e) {
+          e.printStackTrace();
+        }
+      }
+    }
   }
 
   @Override
@@ -122,19 +136,6 @@ public class Robot extends TimedRobot {
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(
             m_robotContainer.getSimulationTotalCurrentDraw()));
-  }
-
-  private List<Pose2d> extractPosesFromPaths(List<PathPlannerPath> pathPlannerPaths) {
-    List<Pose2d> poses = new ArrayList<>();
-    for (PathPlannerPath path : pathPlannerPaths) {
-      poses.addAll(
-          path.getAllPathPoints().stream()
-              .map(
-                  point ->
-                      new Pose2d(point.position.getX(), point.position.getY(), new Rotation2d()))
-              .collect(Collectors.toList()));
-    }
-    return poses;
   }
 
   private void initializeLogging() {

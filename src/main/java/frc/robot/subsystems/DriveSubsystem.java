@@ -230,14 +230,8 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  public void driveRobotRelative(ChassisSpeeds speeds) {
-    drive(speeds, false);
-  }
-
   // differs from DriveSubsystem 2025 REV ION FRC Starter Bot
-  private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
-    if (fieldRelative)
-      speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
+  private void driveRobotRelative(ChassisSpeeds speeds) {
     speeds = ChassisSpeeds.discretize(speeds, LoggedRobot.defaultPeriodSecs);
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
