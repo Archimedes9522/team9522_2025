@@ -136,7 +136,7 @@ public class DriveSubsystem extends SubsystemBase {
               "Back Right Velocity", () -> m_rearRight.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Robot Angle", () -> Rotation2d.fromDegrees(m_gyro.getAngle()).getRadians(), null);
+              "Robot Angle", () -> Rotation2d.fromDegrees(-m_gyro.getAngle()).getRadians(), null);
         });
 
     // Usage reporting for MAXSwerve template
