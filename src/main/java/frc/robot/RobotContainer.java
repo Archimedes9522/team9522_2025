@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,8 +29,10 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureButtonBindings();
-    CameraServer.startAutomaticCapture();
-    // usbcamera.setResolution(320, 240);
+    UsbCamera CoralCam = CameraServer.startAutomaticCapture();
+    UsbCamera ElevatorCam = CameraServer.startAutomaticCapture();
+    CoralCam.setResolution(640, 480);
+    ElevatorCam.setResolution(640, 480);
     autoChooser = AutoBuilder.buildAutoChooser("None");
     SmartDashboard.putData("Auto Chooser", autoChooser);
 

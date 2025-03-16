@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("PDH", m_pdh);
     SmartDashboard.putBoolean("Reset Pose", false);
+    SmartDashboard.putBoolean("SetX", false);
     SmartDashboard.putNumber("Gyro angle", m_gyro.getAngle());
     SmartDashboard.putNumber("Gyro pitch", m_gyro.getPitch());
     SmartDashboard.putNumber("Gyro roll", m_gyro.getRoll());
@@ -95,6 +96,11 @@ public class Robot extends TimedRobot {
       m_robotContainer.m_robotDrive.zeroHeadingCommand();
       m_robotContainer.m_robotDrive.resetOdometry(new Pose2d());
       SmartDashboard.putBoolean("Reset Pose", false); // Reset the button
+    }
+
+    if (SmartDashboard.getBoolean("SetX", false)) {
+      m_robotContainer.m_robotDrive.setXCommand();
+      SmartDashboard.putBoolean("SetX", false);
     }
 
     SmartDashboard.putNumber("Gyro angle", m_gyro.getAngle());

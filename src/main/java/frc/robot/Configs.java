@@ -9,7 +9,7 @@ import frc.robot.Constants.ModuleConstants;
 
 public final class Configs {
   public static final class MAXSwerveModule {
-    public static final SparkFlexConfig drivingConfig = new SparkFlexConfig();
+    public static final SparkMaxConfig drivingConfig = new SparkMaxConfig();
     public static final SparkMaxConfig turningConfig = new SparkMaxConfig();
 
     static {
@@ -19,7 +19,7 @@ public final class Configs {
       double turningFactor = 2 * Math.PI;
       double drivingVelocityFeedForward = 1 / ModuleConstants.kDriveWheelFreeSpeedRps;
 
-      drivingConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(50);
+      drivingConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(40).openLoopRampRate(2);
       drivingConfig
           .encoder
           .positionConversionFactor(drivingFactor) // meters
@@ -66,7 +66,7 @@ public final class Configs {
 
       /*
        * Configure the closed loop controller. We want to make sure we set the
-       * feedback sensor as the primary encoder.
+       * feedback sensor as the primary encoder.+
        */
       armConfig
           .closedLoop
@@ -74,6 +74,8 @@ public final class Configs {
           // Set PID values for position control
           .p(0.1)
           .outputRange(-1, 1)
+          .positionWrappingEnabled(true)
+          .positionWrappingInputRange(0, 2 * Math.PI)
           .maxMotion
           // Set MAXMotion parameters for position control
           .maxVelocity(2000)
@@ -81,7 +83,7 @@ public final class Configs {
           .allowedClosedLoopError(.25);
 
       // Configure basic settings of the elevator motor
-      elevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(50).voltageCompensation(12);
+      elevatorConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(40).voltageCompensation(12);
 
       /*
        * Configure the reverse limit switch for the elevator. By enabling the limit
@@ -119,7 +121,7 @@ public final class Configs {
 
   public static final class AlgaeSubsystem {
     public static final SparkFlexConfig intakeConfig = new SparkFlexConfig();
-    public static final SparkFlexConfig armConfig = new SparkFlexConfig();
+    public static final SparkMaxConfig armConfig = new SparkMaxConfig();
 
     static {
       // Configure basic settings of the shooter motor
