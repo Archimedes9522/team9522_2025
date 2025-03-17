@@ -93,6 +93,8 @@ public class RobotContainer {
 
     // Start Button -> Zero swerve heading
     m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
+
+    m_driverController.povDown().onTrue(m_algaeSubsystem.stowCommand());
   }
 
   public double getSimulationTotalCurrentDraw() {
