@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.223565573770491,
-        "y": 5.0499487704918025
+        "x": 3.5723360655737704,
+        "y": 5.33765368852459
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.271124442941918,
-        "y": 5.0499487704918025
+        "x": 2.2057377049180324,
+        "y": 5.157838114754097
       },
       "isLocked": false,
-      "linkedName": "LowerStart"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.812090163934426,
-        "y": 5.493493852459016
+        "x": 1.6423155737704918,
+        "y": 0.6984118852459017
       },
       "prevControl": {
-        "x": 5.238627049180328,
-        "y": 6.896055327868853
+        "x": 2.469467213114754,
+        "y": 1.2977971311475414
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "BCoralFeeder"
     }
   ],
   "rotationTargets": [],
@@ -33,13 +33,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "setLevel2",
-      "waypointRelativePos": 0,
+      "name": "setFeederStation",
+      "waypointRelativePos": 0.30249831195139004,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "named",
+        "type": "parallel",
         "data": {
-          "name": "setLevel2"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "setFeederStation"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "runIntake"
+              }
+            }
+          ]
         }
       }
     }
@@ -54,13 +67,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.35775354279133
+    "rotation": -126.02737338510364
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 119.35775354279117
   },
   "useDefaultConstraints": true
 }
