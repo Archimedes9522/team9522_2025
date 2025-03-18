@@ -54,10 +54,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -67,10 +69,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   public void setupSmartDashboard() {
     SmartDashboard.putData("Field", m_field);
@@ -116,16 +120,14 @@ public class Robot extends TimedRobot {
       if (AutoBuilder.getAllAutoNames().contains(autoName)) {
         System.out.println("Displaying " + autoName);
         try {
-          List<PathPlannerPath> pathPlannerPaths =
-              PathPlannerAuto.getPathGroupFromAutoFile(autoName);
+          List<PathPlannerPath> pathPlannerPaths = PathPlannerAuto.getPathGroupFromAutoFile(autoName);
           List<Pose2d> poses = new ArrayList<>();
           for (PathPlannerPath path : pathPlannerPaths) {
             poses.addAll(
                 path.getAllPathPoints().stream()
                     .map(
-                        point ->
-                            new Pose2d(
-                                point.position.getX(), point.position.getY(), new Rotation2d()))
+                        point -> new Pose2d(
+                            point.position.getX(), point.position.getY(), new Rotation2d()))
                     .collect(Collectors.toList()));
           }
           m_field.getObject("path").setPoses(poses);

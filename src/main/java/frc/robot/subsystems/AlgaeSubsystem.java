@@ -27,17 +27,17 @@ import frc.robot.Constants.AlgaeSubsystemConstants;
 import frc.robot.Constants.SimulationRobotConstants;
 
 public class AlgaeSubsystem extends SubsystemBase {
-  // Initialize arm SPARK. We will use MAXMotion position control for the arm, so we also need to
+  // Initialize arm SPARK. We will use MAXMotion position control for the arm, so
+  // we also need to
   // initialize the closed loop controller and encoder.
-  private SparkFlex armMotor =
-      new SparkFlex(AlgaeSubsystemConstants.kPivotMotorCanId, MotorType.kBrushless);
+  private SparkFlex armMotor = new SparkFlex(AlgaeSubsystemConstants.kPivotMotorCanId, MotorType.kBrushless);
   private SparkClosedLoopController armController = armMotor.getClosedLoopController();
   private RelativeEncoder armEncoder = armMotor.getEncoder();
 
-  // Initialize intake SPARK. We will use open loop control for this so we don't need a closed loop
+  // Initialize intake SPARK. We will use open loop control for this so we don't
+  // need a closed loop
   // controller like above.
-  private SparkFlex intakeMotor =
-      new SparkFlex(AlgaeSubsystemConstants.kIntakeMotorCanId, MotorType.kBrushless);
+  private SparkFlex intakeMotor = new SparkFlex(AlgaeSubsystemConstants.kIntakeMotorCanId, MotorType.kBrushless);
 
   // Member variables for subsystem state management
   private boolean stowWhenIdle = true;
@@ -46,39 +46,36 @@ public class AlgaeSubsystem extends SubsystemBase {
   // Simulation setup and variables
   private DCMotor armMotorModel = DCMotor.getNeoVortex(1);
   private SparkFlexSim armMotorSim;
-  private final SingleJointedArmSim m_intakeSim =
-      new SingleJointedArmSim(
-          armMotorModel,
-          SimulationRobotConstants.kIntakeReduction,
-          SingleJointedArmSim.estimateMOI(
-              SimulationRobotConstants.kIntakeLength, SimulationRobotConstants.kIntakeMass),
-          SimulationRobotConstants.kIntakeLength,
-          SimulationRobotConstants.kIntakeMinAngleRads,
-          SimulationRobotConstants.kIntakeMaxAngleRads,
-          true,
-          SimulationRobotConstants.kIntakeMinAngleRads,
-          0.0,
-          0.0);
+  private final SingleJointedArmSim m_intakeSim = new SingleJointedArmSim(
+      armMotorModel,
+      SimulationRobotConstants.kIntakeReduction,
+      SingleJointedArmSim.estimateMOI(
+          SimulationRobotConstants.kIntakeLength, SimulationRobotConstants.kIntakeMass),
+      SimulationRobotConstants.kIntakeLength,
+      SimulationRobotConstants.kIntakeMinAngleRads,
+      SimulationRobotConstants.kIntakeMaxAngleRads,
+      true,
+      SimulationRobotConstants.kIntakeMinAngleRads,
+      0.0,
+      0.0);
 
   // Mechanism2d setup for subsytem
   private final Mechanism2d m_mech2d = new Mechanism2d(50, 50);
   private final MechanismRoot2d m_mech2dRoot = m_mech2d.getRoot("Ball Intake Root", 28, 3);
-  private final MechanismLigament2d intakePivotMechanism =
-      m_mech2dRoot.append(
-          new MechanismLigament2d(
-              "Intake Pivot",
-              SimulationRobotConstants.kIntakeShortBarLength
-                  * SimulationRobotConstants.kPixelsPerMeter,
-              Units.radiansToDegrees(SimulationRobotConstants.kIntakeMinAngleRads)));
+  private final MechanismLigament2d intakePivotMechanism = m_mech2dRoot.append(
+      new MechanismLigament2d(
+          "Intake Pivot",
+          SimulationRobotConstants.kIntakeShortBarLength
+              * SimulationRobotConstants.kPixelsPerMeter,
+          Units.radiansToDegrees(SimulationRobotConstants.kIntakeMinAngleRads)));
 
   @SuppressWarnings("unused")
-  private final MechanismLigament2d intakePivotSecondMechanism =
-      intakePivotMechanism.append(
-          new MechanismLigament2d(
-              "Intake Pivot Second Bar",
-              SimulationRobotConstants.kIntakeLongBarLength
-                  * SimulationRobotConstants.kPixelsPerMeter,
-              Units.radiansToDegrees(SimulationRobotConstants.kIntakeBarAngleRads)));
+  private final MechanismLigament2d intakePivotSecondMechanism = intakePivotMechanism.append(
+      new MechanismLigament2d(
+          "Intake Pivot Second Bar",
+          SimulationRobotConstants.kIntakeLongBarLength
+              * SimulationRobotConstants.kPixelsPerMeter,
+          Units.radiansToDegrees(SimulationRobotConstants.kIntakeBarAngleRads)));
 
   public AlgaeSubsystem() {
     /*
@@ -113,7 +110,8 @@ public class AlgaeSubsystem extends SubsystemBase {
   /** Zero the arm encoder when the user button is pressed on the roboRIO */
   private void zeroOnUserButton() {
     if (!wasReset && RobotController.getUserButton()) {
-      // Zero the encoder only when button switches from "unpressed" to "pressed" to prevent
+      // Zero the encoder only when button switches from "unpressed" to "pressed" to
+      // prevent
       // constant zeroing while pressed
       wasReset = true;
       armEncoder.setPosition(0);
@@ -123,10 +121,13 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to run the algae intake. This will extend the arm to its "down" position and run the
+   * Command to run the algae intake. This will extend the arm to its "down"
+   * position and run the
    * motor at its "forward" power to intake the ball.
    *
-   * <p>This will also update the idle state to hold onto the ball when this command is not running.
+   * <p>
+   * This will also update the idle state to hold onto the ball when this command
+   * is not running.
    */
   public Command runIntakeCommand() {
     return this.run(
@@ -138,10 +139,13 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to run the algae intake in reverse. This will extend the arm to its "hold" position and
+   * Command to run the algae intake in reverse. This will extend the arm to its
+   * "hold" position and
    * run the motor at its "reverse" power to eject the ball.
    *
-   * <p>This will also update the idle state to stow the arm when this command is not running.
+   * <p>
+   * This will also update the idle state to stow the arm when this command is not
+   * running.
    */
   public Command reverseIntakeCommand() {
     return this.run(
@@ -161,9 +165,12 @@ public class AlgaeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to run when the intake is not actively running. When in the "hold" state, the intake
-   * will stay in the "hold" position and run the motor at its "hold" power to hold onto the ball.
-   * When in the "stow" state, the intake will stow the arm in the "stow" position and stop the
+   * Command to run when the intake is not actively running. When in the "hold"
+   * state, the intake
+   * will stay in the "hold" position and run the motor at its "hold" power to
+   * hold onto the ball.
+   * When in the "stow" state, the intake will stow the arm in the "stow" position
+   * and stop the
    * motor.
    */
   public Command idleCommand() {

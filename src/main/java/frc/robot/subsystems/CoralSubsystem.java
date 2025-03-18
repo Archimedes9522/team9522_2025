@@ -39,25 +39,24 @@ public class CoralSubsystem extends SubsystemBase {
     kLevel4;
   }
 
-  // Initialize arm SPARK. We will use MAXMotion position control for the arm, so we also need to
+  // Initialize arm SPARK. We will use MAXMotion position control for the arm, so
+  // we also need to
   // initialize the closed loop controller and encoder.
-  private SparkMax armMotor =
-      new SparkMax(CoralSubsystemConstants.kArmMotorCanId, MotorType.kBrushless);
+  private SparkMax armMotor = new SparkMax(CoralSubsystemConstants.kArmMotorCanId, MotorType.kBrushless);
   private SparkClosedLoopController armController = armMotor.getClosedLoopController();
   private RelativeEncoder armEncoder = armMotor.getEncoder();
 
-  // Initialize elevator SPARK. We will use MAXMotion position control for the elevator, so we also
+  // Initialize elevator SPARK. We will use MAXMotion position control for the
+  // elevator, so we also
   // need to initialize the closed loop controller and encoder.
-  private SparkFlex elevatorMotor =
-      new SparkFlex(CoralSubsystemConstants.kElevatorMotorCanId, MotorType.kBrushless);
-  private SparkClosedLoopController elevatorClosedLoopController =
-      elevatorMotor.getClosedLoopController();
+  private SparkFlex elevatorMotor = new SparkFlex(CoralSubsystemConstants.kElevatorMotorCanId, MotorType.kBrushless);
+  private SparkClosedLoopController elevatorClosedLoopController = elevatorMotor.getClosedLoopController();
   private RelativeEncoder elevatorEncoder = elevatorMotor.getEncoder();
 
-  // Initialize intake SPARK. We will use open loop control for this so we don't need a closed loop
+  // Initialize intake SPARK. We will use open loop control for this so we don't
+  // need a closed loop
   // controller like above.
-  private SparkMax intakeMotor =
-      new SparkMax(CoralSubsystemConstants.kIntakeMotorCanId, MotorType.kBrushless);
+  private SparkMax intakeMotor = new SparkMax(CoralSubsystemConstants.kIntakeMotorCanId, MotorType.kBrushless);
 
   // Member variables for subsystem state management
   private boolean wasResetByButton = false;
@@ -69,51 +68,47 @@ public class CoralSubsystem extends SubsystemBase {
   private DCMotor elevatorMotorModel = DCMotor.getNeoVortex(1);
   private SparkFlexSim elevatorMotorSim;
   private SparkLimitSwitchSim elevatorLimitSwitchSim;
-  private final ElevatorSim m_elevatorSim =
-      new ElevatorSim(
-          elevatorMotorModel,
-          SimulationRobotConstants.kElevatorGearing,
-          SimulationRobotConstants.kCarriageMass,
-          SimulationRobotConstants.kElevatorDrumRadius,
-          SimulationRobotConstants.kMinElevatorHeightMeters,
-          SimulationRobotConstants.kMaxElevatorHeightMeters,
-          true,
-          SimulationRobotConstants.kMinElevatorHeightMeters,
-          0.0,
-          0.0);
+  private final ElevatorSim m_elevatorSim = new ElevatorSim(
+      elevatorMotorModel,
+      SimulationRobotConstants.kElevatorGearing,
+      SimulationRobotConstants.kCarriageMass,
+      SimulationRobotConstants.kElevatorDrumRadius,
+      SimulationRobotConstants.kMinElevatorHeightMeters,
+      SimulationRobotConstants.kMaxElevatorHeightMeters,
+      true,
+      SimulationRobotConstants.kMinElevatorHeightMeters,
+      0.0,
+      0.0);
 
   private DCMotor armMotorModel = DCMotor.getNEO(1);
   private SparkMaxSim armMotorSim;
-  private final SingleJointedArmSim m_armSim =
-      new SingleJointedArmSim(
-          armMotorModel,
-          SimulationRobotConstants.kArmReduction,
-          SingleJointedArmSim.estimateMOI(
-              SimulationRobotConstants.kArmLength, SimulationRobotConstants.kArmMass),
-          SimulationRobotConstants.kArmLength,
-          SimulationRobotConstants.kMinAngleRads,
-          SimulationRobotConstants.kMaxAngleRads,
-          true,
-          SimulationRobotConstants.kMinAngleRads,
-          0.0,
-          0.0);
+  private final SingleJointedArmSim m_armSim = new SingleJointedArmSim(
+      armMotorModel,
+      SimulationRobotConstants.kArmReduction,
+      SingleJointedArmSim.estimateMOI(
+          SimulationRobotConstants.kArmLength, SimulationRobotConstants.kArmMass),
+      SimulationRobotConstants.kArmLength,
+      SimulationRobotConstants.kMinAngleRads,
+      SimulationRobotConstants.kMaxAngleRads,
+      true,
+      SimulationRobotConstants.kMinAngleRads,
+      0.0,
+      0.0);
 
   // Mechanism2d setup for subsystem
   private final Mechanism2d m_mech2d = new Mechanism2d(50, 50);
   private final MechanismRoot2d m_mech2dRoot = m_mech2d.getRoot("ElevatorArm Root", 25, 0);
-  private final MechanismLigament2d m_elevatorMech2d =
-      m_mech2dRoot.append(
-          new MechanismLigament2d(
-              "Elevator",
-              SimulationRobotConstants.kMinElevatorHeightMeters
-                  * SimulationRobotConstants.kPixelsPerMeter,
-              90));
-  private final MechanismLigament2d m_armMech2d =
-      m_elevatorMech2d.append(
-          new MechanismLigament2d(
-              "Arm",
-              SimulationRobotConstants.kArmLength * SimulationRobotConstants.kPixelsPerMeter,
-              180 - Units.radiansToDegrees(SimulationRobotConstants.kMinAngleRads) - 90));
+  private final MechanismLigament2d m_elevatorMech2d = m_mech2dRoot.append(
+      new MechanismLigament2d(
+          "Elevator",
+          SimulationRobotConstants.kMinElevatorHeightMeters
+              * SimulationRobotConstants.kPixelsPerMeter,
+          90));
+  private final MechanismLigament2d m_armMech2d = m_elevatorMech2d.append(
+      new MechanismLigament2d(
+          "Arm",
+          SimulationRobotConstants.kArmLength * SimulationRobotConstants.kPixelsPerMeter,
+          180 - Units.radiansToDegrees(SimulationRobotConstants.kMinAngleRads) - 90));
 
   public CoralSubsystem() {
     /*
@@ -143,7 +138,7 @@ public class CoralSubsystem extends SubsystemBase {
     SmartDashboard.putData("Coral Subsystem", m_mech2d);
 
     // Zero arm and elevator encoders on initialization
-    //armEncoder.setPosition(0);
+    // armEncoder.setPosition(0);
     elevatorEncoder.setPosition(0);
 
     // Initialize simulation values
@@ -153,8 +148,10 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   /**
-   * Drive the arm and elevator motors to their respective setpoints. This will use MAXMotion
-   * position control which will allow for a smooth acceleration and deceleration to the mechanisms'
+   * Drive the arm and elevator motors to their respective setpoints. This will
+   * use MAXMotion
+   * position control which will allow for a smooth acceleration and deceleration
+   * to the mechanisms'
    * setpoints.
    */
   private void moveToSetpoint() {
@@ -166,7 +163,8 @@ public class CoralSubsystem extends SubsystemBase {
   /** Zero the elevator encoder when the limit switch is pressed. */
   private void zeroElevatorOnLimitSwitch() {
     if (!wasResetByLimit && elevatorMotor.getReverseLimitSwitch().isPressed()) {
-      // Zero the encoder only when the limit switch is switches from "unpressed" to "pressed" to
+      // Zero the encoder only when the limit switch is switches from "unpressed" to
+      // "pressed" to
       // prevent constant zeroing while pressed
       elevatorEncoder.setPosition(0);
       wasResetByLimit = true;
@@ -175,10 +173,14 @@ public class CoralSubsystem extends SubsystemBase {
     }
   }
 
-  /** Zero the arm and elevator encoders when the user button is pressed on the roboRIO. */
+  /**
+   * Zero the arm and elevator encoders when the user button is pressed on the
+   * roboRIO.
+   */
   private void zeroOnUserButton() {
     if (!wasResetByButton && RobotController.getUserButton()) {
-      // Zero the encoders only when button switches from "unpressed" to "pressed" to prevent
+      // Zero the encoders only when button switches from "unpressed" to "pressed" to
+      // prevent
       // constant zeroing while pressed
       wasResetByButton = true;
       armEncoder.setPosition(0);
@@ -194,7 +196,8 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to set the subsystem setpoint. This will set the arm and elevator to their predefined
+   * Command to set the subsystem setpoint. This will set the arm and elevator to
+   * their predefined
    * positions for the given setpoint.
    */
   public Command setSetpointCommand(Setpoint setpoint) {
@@ -226,7 +229,8 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to run the intake motor. When the command is interrupted, e.g. the button is released,
+   * Command to run the intake motor. When the command is interrupted, e.g. the
+   * button is released,
    * the motor will stop.
    */
   public Command runIntakeCommand() {
@@ -235,7 +239,8 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   /**
-   * Command to reverses the intake motor. When the command is interrupted, e.g. the button is
+   * Command to reverses the intake motor. When the command is interrupted, e.g.
+   * the button is
    * released, the motor will stop.
    */
   public Command reverseIntakeCommand() {
@@ -269,7 +274,7 @@ public class CoralSubsystem extends SubsystemBase {
                 + Units.rotationsToDegrees(
                     armEncoder.getPosition() / SimulationRobotConstants.kArmReduction))
             - 90 // subtract 90 degrees to account for the elevator
-        );
+    );
   }
 
   /** Get the current drawn by each simulation physics model */
@@ -294,8 +299,8 @@ public class CoralSubsystem extends SubsystemBase {
     // Iterate the elevator and arm SPARK simulations
     elevatorMotorSim.iterate(
         ((m_elevatorSim.getVelocityMetersPerSecond()
-                    / (SimulationRobotConstants.kElevatorDrumRadius * 2.0 * Math.PI))
-                * SimulationRobotConstants.kElevatorGearing)
+            / (SimulationRobotConstants.kElevatorDrumRadius * 2.0 * Math.PI))
+            * SimulationRobotConstants.kElevatorGearing)
             * 60.0,
         RobotController.getBatteryVoltage(),
         0.02);

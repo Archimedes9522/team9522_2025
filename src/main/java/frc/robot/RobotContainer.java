@@ -5,6 +5,8 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.MathUtil;
@@ -24,10 +26,26 @@ public class RobotContainer {
   private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
   private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
   private final SendableChooser<Command> autoChooser;
-  CommandXboxController m_driverController =
-      new CommandXboxController(OIConstants.kDriverControllerPort);
+  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 
   public RobotContainer() {
+    // Coral Subsystem Commands
+    NamedCommands.registerCommand("runIntake", m_coralSubSystem.runIntakeCommand());
+    NamedCommands.registerCommand("reverseIntake", m_coralSubSystem.reverseIntakeCommand());
+    NamedCommands.registerCommand("setFeederStation", m_coralSubSystem.setSetpointCommand(Setpoint.kFeederStation));
+    NamedCommands.registerCommand("setLevel2", m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2));
+    NamedCommands.registerCommand("setLevel3", m_coralSubSystem.setSetpointCommand(Setpoint.kLevel3));
+    NamedCommands.registerCommand("setLevel4", m_coralSubSystem.setSetpointCommand(Setpoint.kLevel4));
+
+    // Algae Subsystem Commands
+    NamedCommands.registerCommand("runBallIntake", m_algaeSubsystem.runIntakeCommand());
+    NamedCommands.registerCommand("reverseBallIntake", m_algaeSubsystem.reverseIntakeCommand());
+    NamedCommands.registerCommand("stowBallIntake", m_algaeSubsystem.stowCommand());
+
+    // Drive Subsystem Commands
+    NamedCommands.registerCommand("setX", m_robotDrive.setXCommand());
+    NamedCommands.registerCommand("zeroHeading", m_robotDrive.zeroHeadingCommand());
+
     configureButtonBindings();
     UsbCamera CoralCam = CameraServer.startAutomaticCapture();
     UsbCamera ElevatorCam = CameraServer.startAutomaticCapture();
@@ -40,15 +58,14 @@ public class RobotContainer {
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
-            () ->
-                m_robotDrive.drive(
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(
-                        m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true),
+            () -> m_robotDrive.drive(
+                -MathUtil.applyDeadband(
+                    m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(
+                    m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(
+                    m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                true),
             m_robotDrive));
     m_algaeSubsystem.setDefaultCommand(m_algaeSubsystem.idleCommand());
   }

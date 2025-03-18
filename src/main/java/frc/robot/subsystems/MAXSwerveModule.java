@@ -31,8 +31,10 @@ public class MAXSwerveModule {
   private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
 
   /**
-   * Constructs a MAXSwerveModule and configures the driving and turning motor, encoder, and PID
-   * controller. This configuration is specific to the REV MAXSwerve Module built with NEOs, SPARKS
+   * Constructs a MAXSwerveModule and configures the driving and turning motor,
+   * encoder, and PID
+   * controller. This configuration is specific to the REV MAXSwerve Module built
+   * with NEOs, SPARKS
    * MAX, and a Through Bore Encoder.
    */
   public MAXSwerveModule(int drivingCANId, int turningCANId, double chassisAngularOffset) {
@@ -97,8 +99,7 @@ public class MAXSwerveModule {
     // Apply chassis angular offset to the desired state.
     SwerveModuleState correctedDesiredState = new SwerveModuleState();
     correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-    correctedDesiredState.angle =
-        desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
+    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(m_chassisAngularOffset));
 
     // Optimize the reference state to avoid spinning further than 90 degrees.
     correctedDesiredState.optimize(new Rotation2d(m_turningEncoder.getPosition()));
