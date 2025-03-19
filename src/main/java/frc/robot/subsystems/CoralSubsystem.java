@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Configs;
 import frc.robot.Constants.CoralSubsystemConstants;
@@ -239,6 +240,17 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   /**
+   * Command to run the intake motor for 1 second. Useful for PathPlanner where
+   * commands need to complete on their own.
+   */
+  public Command runIntakeHoldCommand() {
+    return Commands.sequence(
+        Commands.runOnce(() -> this.setIntakePower(IntakeSetpoints.kForward)),
+        Commands.waitSeconds(1.0),
+        Commands.runOnce(() -> this.setIntakePower(0.0))).withName("RunIntakeHold");
+  }
+
+  /**
    * Command to reverses the intake motor. When the command is interrupted, e.g.
    * the button is
    * released, the motor will stop.
@@ -246,6 +258,18 @@ public class CoralSubsystem extends SubsystemBase {
   public Command reverseIntakeCommand() {
     return this.startEnd(
         () -> this.setIntakePower(IntakeSetpoints.kReverse), () -> this.setIntakePower(0.0));
+  }
+
+  /**
+   * Command to reverse the intake motor for 1 second. Useful for PathPlanner
+   * where
+   * commands need to complete on their own.
+   */
+  public Command reverseIntakeHoldCommand() {
+    return Commands.sequence(
+        Commands.runOnce(() -> this.setIntakePower(IntakeSetpoints.kReverse)),
+        Commands.waitSeconds(1.0),
+        Commands.runOnce(() -> this.setIntakePower(0.0))).withName("ReverseIntakeHold");
   }
 
   @Override

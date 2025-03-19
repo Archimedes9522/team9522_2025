@@ -30,8 +30,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     // Coral Subsystem Commands
-    NamedCommands.registerCommand("runIntake", m_coralSubSystem.runIntakeCommand());
-    NamedCommands.registerCommand("reverseIntake", m_coralSubSystem.reverseIntakeCommand());
+    NamedCommands.registerCommand("runIntake", m_coralSubSystem.runIntakeHoldCommand());
+    NamedCommands.registerCommand("reverseIntake", m_coralSubSystem.reverseIntakeHoldCommand());
     NamedCommands.registerCommand("setFeederStation", m_coralSubSystem.setSetpointCommand(Setpoint.kFeederStation));
     NamedCommands.registerCommand("setLevel2", m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2));
     NamedCommands.registerCommand("setLevel3", m_coralSubSystem.setSetpointCommand(Setpoint.kLevel3));

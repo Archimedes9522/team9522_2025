@@ -17,13 +17,31 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "setLevel2"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "reverseIntake"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.0
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "setFeederStation"
                 }
               }
             ]
