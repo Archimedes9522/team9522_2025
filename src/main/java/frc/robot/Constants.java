@@ -178,6 +178,28 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
+  public static final class VisionConstants {
+    // Camera configuration
+    public static final String kCameraName = "AprilTagCamera";
+
+    // Camera position on robot (adjust to your robot's camera mounting)
+    public static final double kCameraHeightMeters = 0.5;
+    public static final double kCameraPitchRadians = 0.0;
+
+    // PID values for vision alignment
+    public static final double kPX = 0.1;
+    public static final double kIX = 0.0;
+    public static final double kDX = 0.0;
+
+    public static final double kPY = 0.1;
+    public static final double kIY = 0.0;
+    public static final double kDY = 0.0;
+
+    public static final double kPRot = 0.1;
+    public static final double kIRot = 0.0;
+    public static final double kDRot = 0.0;
+  }
+
   public static final class SimulationRobotConstants {
     public static final double kPixelsPerMeter = 20;
 
