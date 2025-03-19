@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "StraightTest"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "StraightTest"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "setLevel2"
+                }
+              }
+            ]
           }
         },
         {
@@ -17,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "setLevel2"
+                  "name": "runIntake"
                 }
               },
               {
@@ -25,17 +38,18 @@
                 "data": {
                   "waitTime": 1.0
                 }
-              },
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "reverseIntake"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
+                  "pathName": "CenterTopCoral"
                 }
               },
               {
@@ -45,12 +59,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterTopCoral"
           }
         }
       ]
