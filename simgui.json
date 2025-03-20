@@ -6,7 +6,9 @@
       "/SmartDashboard/Algae Subsystem": "Mechanism2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Coral Subsystem": "Mechanism2d",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/PhotonAlerts": "Alerts"
     },
     "windows": {
       "/SmartDashboard/Algae Subsystem": {
