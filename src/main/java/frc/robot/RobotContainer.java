@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.commands.MoveToAprilTagCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,12 +20,10 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.PhotonDriveSubsystem;
-import frc.robot.commands.AlignToAprilTagCommand;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
-        private final PhotonDriveSubsystem m_photonDriveSubsystem = new PhotonDriveSubsystem(m_robotDrive);
+        private final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final SendableChooser<Command> autoChooser;
@@ -47,17 +47,6 @@ public class RobotContainer {
                 // Drive Subsystem Commands
                 NamedCommands.registerCommand("setX", m_robotDrive.setXCommand());
                 NamedCommands.registerCommand("zeroHeading", m_robotDrive.zeroHeadingCommand());
-
-                /*
-                 * m_photonDriveSubsystem.setDefaultCommand(
-                 * new RunCommand(
-                 * () -> m_photonDriveSubsystem.driveWithVisionAlignment(
-                 * -m_driverController.getLeftY(),
-                 * -m_driverController.getLeftX(),
-                 * -m_driverController.getRightX(),
-                 * false),
-                 * m_photonDriveSubsystem));
-                 */
                 configureButtonBindings();
                 autoChooser = AutoBuilder.buildAutoChooser("None");
                 SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -124,11 +113,8 @@ public class RobotContainer {
 
                 m_driverController.povDown().onTrue(m_algaeSubsystem.stowCommand());
 
-                m_driverController.povLeft().whileTrue(new AlignToAprilTagCommand(
-                                m_photonDriveSubsystem,
-                                () -> -m_driverController.getLeftY() * 0.5, // Reduced speed during alignment
-                                () -> -m_driverController.getLeftX() * 0.5,
-                                () -> -m_driverController.getRightX() * 0.5));
+                m_driverController.back().whileTrue(new MoveToAprilTagCommand(m_robotDrive, m_visionSubsystem));
+
         }
 
         public double getSimulationTotalCurrentDraw() {

@@ -181,31 +181,8 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    // Camera configuration
-    public static final String kDriverCameraName = "DriverCamera";
-    public static final String kLeftCameraName = "AprilTagLeft";
-    public static final String kRightCameraName = "AprilTagRight";
-
-    // Camera position on robot (adjust to your robot's camera mounting)
-    public static final double kCameraHeightMeters = 0.5;
-    public static final double kCameraPitchRadians = 0.0;
-    public static final double kLeftCameraYawOffset = -5.0; // Adjust based on actual mounting
-    public static final double kRightCameraYawOffset = 5.0; // Adjust based on actual mounting
-
-    // PID values for vision alignment
-    public static final double kPX = 0.1;
-    public static final double kIX = 0.0;
-    public static final double kDX = 0.0;
-
-    public static final double kPY = 0.1;
-    public static final double kIY = 0.0;
-    public static final double kDY = 0.0;
-
-    public static final double kPRot = 0.1;
-    public static final double kIRot = 0.0;
-    public static final double kDRot = 0.0;
-
-    public static final boolean kConfigureDriverCameraForDriving = true;
+    public static final String kFrontCameraName = "FrontCamera";
+    public static final String kBackCameraName = "BackCamera";
   }
 
   public static final class SimulationRobotConstants {
