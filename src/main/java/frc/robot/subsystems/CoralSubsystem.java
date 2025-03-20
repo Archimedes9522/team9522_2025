@@ -250,6 +250,11 @@ public class CoralSubsystem extends SubsystemBase {
         Commands.runOnce(() -> this.setIntakePower(0.0))).withName("RunIntakeHold");
   }
 
+  public Command runSlideCommand() {
+    return Commands.startEnd(
+        () -> this.setIntakePower(IntakeSetpoints.kSlide), () -> this.setIntakePower(0.0));
+  }
+
   /**
    * Command to reverses the intake motor. When the command is interrupted, e.g.
    * the button is

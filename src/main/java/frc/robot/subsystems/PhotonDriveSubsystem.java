@@ -1,10 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.photonvision.PhotonCamera;
@@ -13,13 +9,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.VisionConstants;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
 public class PhotonDriveSubsystem extends SubsystemBase {
-    // The drive subsystem (could be any drivetrain implementation)
+    // The drive subsystem
     private final DriveSubsystem m_driveSubsystem;
 
     // PhotonVision cameras
@@ -32,11 +23,16 @@ public class PhotonDriveSubsystem extends SubsystemBase {
     private final PIDController m_yController;
     private final PIDController m_rotController;
 
-    // Tracking status
+    // Target tracking variables
     private boolean m_hasTarget = false;
     private PhotonTrackedTarget m_bestTarget = null;
     private int m_lastSeenCameraIndex = -1; // -1 = none, 0 = left, 1 = right
 
+    /**
+     * Creates a new PhotonDriveSubsystem
+     * 
+     * @param driveSubsystem The drive subsystem to control
+     */
     public PhotonDriveSubsystem(DriveSubsystem driveSubsystem) {
         this.m_driveSubsystem = driveSubsystem;
 
@@ -45,12 +41,19 @@ public class PhotonDriveSubsystem extends SubsystemBase {
         m_leftCamera = new PhotonCamera(VisionConstants.kLeftCameraName);
         m_rightCamera = new PhotonCamera(VisionConstants.kRightCameraName);
 
-        // Configure driver camera for driver view (if needed)
-        if (VisionConstants.kConfigureDriverCameraForDriving) {
-            m_driverCamera.setDriverMode(true);
+        // Configure cameras appropriately
+        m_driverCamera.setDriverMode(true); // Always set driver camera to driver mode
+
+        // Set AprilTag cameras to appropriate pipeline
+        try {
+            m_leftCamera.setPipelineIndex(0); // Assuming pipeline 0 is for AprilTags
+            m_rightCamera.setPipelineIndex(0); // Assuming pipeline 0 is for AprilTags
+        } catch (Exception e) {
+            // Log error if pipelines couldn't be set
+            System.err.println("Error setting camera pipelines: " + e.getMessage());
         }
 
-        // Configure PID controllers
+        // Configure PID controllers for vision alignment
         m_xController = new PIDController(VisionConstants.kPX, VisionConstants.kIX, VisionConstants.kDX);
         m_yController = new PIDController(VisionConstants.kPY, VisionConstants.kIY, VisionConstants.kDY);
         m_rotController = new PIDController(VisionConstants.kPRot, VisionConstants.kIRot, VisionConstants.kDRot);
@@ -63,6 +66,9 @@ public class PhotonDriveSubsystem extends SubsystemBase {
 
         // Display target information to SmartDashboard
         SmartDashboard.putBoolean("Vision/HasTarget", m_hasTarget);
+        SmartDashboard.putBoolean("Vision/LeftCameraConnected", m_leftCamera.isConnected());
+        SmartDashboard.putBoolean("Vision/RightCameraConnected", m_rightCamera.isConnected());
+
         if (m_hasTarget && m_bestTarget != null) {
             SmartDashboard.putNumber("Vision/TargetID", m_bestTarget.getFiducialId());
             SmartDashboard.putNumber("Vision/TargetYaw", m_bestTarget.getYaw());
@@ -75,44 +81,42 @@ public class PhotonDriveSubsystem extends SubsystemBase {
      * Updates vision data from both cameras and selects the best target
      */
     private void updateVision() {
-        // Get results from both cameras
-        PhotonPipelineResult leftResult = m_leftCamera.getLatestResult();
-        PhotonPipelineResult rightResult = m_rightCamera.getLatestResult();
+        try {
+            // Get latest results from both cameras
+            PhotonPipelineResult leftResult = m_leftCamera.getLatestResult();
+            PhotonPipelineResult rightResult = m_rightCamera.getLatestResult();
 
-        // Check if either camera sees a target
-        boolean leftHasTargets = leftResult.hasTargets();
-        boolean rightHasTargets = rightResult.hasTargets();
+            // Find the best target from either camera
+            if (leftResult.hasTargets() && rightResult.hasTargets()) {
+                // If both cameras see targets, use the one with the largest target
+                PhotonTrackedTarget leftBest = leftResult.getBestTarget();
+                PhotonTrackedTarget rightBest = rightResult.getBestTarget();
 
-        m_hasTarget = leftHasTargets || rightHasTargets;
-
-        if (!m_hasTarget) {
-            // No targets visible
-            m_bestTarget = null;
-            return;
-        }
-
-        // Collect all targets from both cameras
-        List<CameraTarget> allTargets = new ArrayList<>();
-
-        if (leftHasTargets) {
-            for (PhotonTrackedTarget target : leftResult.getTargets()) {
-                allTargets.add(new CameraTarget(target, 0)); // 0 = left camera
+                if (leftBest.getArea() > rightBest.getArea()) {
+                    m_bestTarget = leftBest;
+                    m_lastSeenCameraIndex = 0; // Left camera
+                } else {
+                    m_bestTarget = rightBest;
+                    m_lastSeenCameraIndex = 1; // Right camera
+                }
+                m_hasTarget = true;
+            } else if (leftResult.hasTargets()) {
+                m_bestTarget = leftResult.getBestTarget();
+                m_lastSeenCameraIndex = 0; // Left camera
+                m_hasTarget = true;
+            } else if (rightResult.hasTargets()) {
+                m_bestTarget = rightResult.getBestTarget();
+                m_lastSeenCameraIndex = 1; // Right camera
+                m_hasTarget = true;
+            } else {
+                m_hasTarget = false;
+                m_bestTarget = null;
+                // Keep the last seen camera index for history
             }
-        }
-
-        if (rightHasTargets) {
-            for (PhotonTrackedTarget target : rightResult.getTargets()) {
-                allTargets.add(new CameraTarget(target, 1)); // 1 = right camera
-            }
-        }
-
-        // Select the best target based on criteria (closest to center, largest, etc.)
-        Optional<CameraTarget> bestTarget = allTargets.stream()
-                .min(Comparator.comparing(target -> Math.abs(target.target.getYaw())));
-
-        if (bestTarget.isPresent()) {
-            m_bestTarget = bestTarget.get().target;
-            m_lastSeenCameraIndex = bestTarget.get().cameraIndex;
+        } catch (Exception e) {
+            // Handle exceptions from camera operations
+            m_hasTarget = false;
+            SmartDashboard.putString("Vision/Error", e.getMessage());
         }
     }
 
@@ -158,13 +162,11 @@ public class PhotonDriveSubsystem extends SubsystemBase {
             double yaw = m_bestTarget.getYaw();
             double pitch = m_bestTarget.getPitch();
 
-            // Apply camera offset correction if using left/right camera
-            if (m_lastSeenCameraIndex >= 0) {
-                double[] cameraYawOffset = {
-                        VisionConstants.kLeftCameraYawOffset,
-                        VisionConstants.kRightCameraYawOffset
-                };
-                yaw += cameraYawOffset[m_lastSeenCameraIndex];
+            // Apply camera offset correction based on which camera is active
+            if (m_lastSeenCameraIndex == 0) {
+                yaw += VisionConstants.kLeftCameraYawOffset;
+            } else if (m_lastSeenCameraIndex == 1) {
+                yaw += VisionConstants.kRightCameraYawOffset;
             }
 
             // Calculate control outputs
@@ -175,8 +177,7 @@ public class PhotonDriveSubsystem extends SubsystemBase {
             // Clamp speeds to prevent too aggressive movement
             xSpeed = Math.copySign(Math.min(Math.abs(xSpeed), DriveConstants.kMaxSpeedMetersPerSecond), xSpeed);
             ySpeed = Math.copySign(Math.min(Math.abs(ySpeed), DriveConstants.kMaxSpeedMetersPerSecond), ySpeed);
-            rotSpeed = Math.copySign(Math.min(Math.abs(rotSpeed), DriveConstants.kMaxAngularSpeedRadiansPerSecond),
-                    rotSpeed);
+            rotSpeed = Math.copySign(Math.min(Math.abs(rotSpeed), DriveConstants.kMaxAngularSpeed), rotSpeed);
 
             // Drive with calculated speeds
             m_driveSubsystem.drive(xSpeed, ySpeed, rotSpeed, true);
@@ -184,22 +185,9 @@ public class PhotonDriveSubsystem extends SubsystemBase {
             // No target or vision alignment not requested, use manual controls
             double xSpeed = manualX * DriveConstants.kMaxSpeedMetersPerSecond;
             double ySpeed = manualY * DriveConstants.kMaxSpeedMetersPerSecond;
-            double rotSpeed = manualRot * DriveConstants.kMaxAngularSpeedRadiansPerSecond;
+            double rotSpeed = manualRot * DriveConstants.kMaxAngularSpeed;
 
             m_driveSubsystem.drive(xSpeed, ySpeed, rotSpeed, true);
-        }
-    }
-
-    /**
-     * Helper class to keep track of which camera saw a target
-     */
-    private static class CameraTarget {
-        public PhotonTrackedTarget target;
-        public int cameraIndex; // 0 = left, 1 = right
-
-        public CameraTarget(PhotonTrackedTarget target, int cameraIndex) {
-            this.target = target;
-            this.cameraIndex = cameraIndex;
         }
     }
 }

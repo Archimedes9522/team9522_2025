@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.684118852459015,
-        "y": 4.00701844262295
+        "x": 7.959836065573771,
+        "y": 5.0499487704918025
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.990884432704105,
-        "y": 3.9986210813740244
+        "x": 7.222034510728764,
+        "y": 5.04981153016377
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterStart"
     },
     {
       "anchor": {
-        "x": 6.149692622950819,
-        "y": 4.00701844262295
+        "x": 6.077766393442623,
+        "y": 4.150870901639344
       },
       "prevControl": {
-        "x": 5.880818766798373,
-        "y": 4.009015756367996
+        "x": 6.484718945055795,
+        "y": 4.152805796610977
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterReef"
     }
   ],
   "rotationTargets": [],

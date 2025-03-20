@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+
 import org.littletonrobotics.junction.LoggedRobot;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -226,6 +228,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   // differs from DriveSubsystem 2025 REV ION FRC Starter Bot
   private void driveRobotRelative(ChassisSpeeds speeds) {
+    speeds = new ChassisSpeeds(
+        speeds.vxMetersPerSecond * OIConstants.kDriveSpeedFactor,
+        speeds.vyMetersPerSecond * OIConstants.kDriveSpeedFactor,
+        speeds.omegaRadiansPerSecond);
     speeds = ChassisSpeeds.discretize(speeds, LoggedRobot.defaultPeriodSecs);
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
