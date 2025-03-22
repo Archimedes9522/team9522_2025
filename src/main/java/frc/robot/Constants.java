@@ -38,7 +38,7 @@ public final class Constants {
       public static final int kLevel1 = 0;
       public static final int kLevel2 = 0;
       public static final int kLevel3 = 100;
-      public static final int kLevel4 = 150;
+      public static final int kLevel4 = 160;
     }
 
     public static final class ArmSetpoints {
@@ -71,6 +71,10 @@ public final class Constants {
       public static final double kReverse = -0.5;
       public static final double kHold = 0.25;
     }
+  }
+
+  public static final class ClimberSubsystemConstants {
+    public static final int kClimberMotorCanId = 14;
   }
 
   public static final class DriveConstants {

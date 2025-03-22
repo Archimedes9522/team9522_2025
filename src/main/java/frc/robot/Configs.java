@@ -99,8 +99,8 @@ public final class Configs {
           .p(0.1)
           .outputRange(-1, 1).maxMotion
           // Set MAXMotion parameters for position control
-          .maxVelocity(4200)
-          .maxAcceleration(6000)
+          .maxVelocity(5500)
+          .maxAcceleration(8000)
           .allowedClosedLoopError(0.5);
 
       // Configure basic settings of the intake motor
