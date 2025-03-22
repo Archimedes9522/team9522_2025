@@ -13,6 +13,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
@@ -30,6 +31,7 @@ public class RobotContainer {
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+        private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 
@@ -86,15 +88,26 @@ public class RobotContainer {
                 // Right Bumper -> Run tube intake in reverse
                 m_driverController.rightBumper().whileTrue(m_coralSubSystem.reverseIntakeCommand());
 
-                m_driverController.povUp().whileTrue(m_coralSubSystem.runSlideCommand());
+                // Both Bumpers -> Run slide (when both left and right bumpers are pressed)
+                m_driverController.leftBumper().and(m_driverController.rightBumper())
+                                .whileTrue(m_coralSubSystem.runSlideCommand());
 
                 // B Button -> Elevator/Arm to human player position, set ball intake to stow
                 // when idle
                 m_driverController.b().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kFeederStation)
                                 .alongWith(m_algaeSubsystem.stowCommand()));
 
-                // A Button -> Elevator/Arm to level 2 position
-                m_driverController.a().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2));
+                // A Button -> Toggle between Level1 and Level2
+                m_driverController.a().onTrue(Commands.runOnce(() -> {
+                        // Toggle between level 1 and level 2
+                        if (isLevel1) {
+                                m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2).schedule();
+                                isLevel1 = false;
+                        } else {
+                                m_coralSubSystem.setSetpointCommand(Setpoint.kLevel1).schedule();
+                                isLevel1 = true;
+                        }
+                }));
 
                 // X Button -> Elevator/Arm to level 3 position
                 m_driverController.x().onTrue(m_coralSubSystem.setSetpointCommand(Setpoint.kLevel3));
@@ -133,6 +146,7 @@ public class RobotContainer {
                                                 VisionConstants.RIGHT_OFFSET
                                                                 .getDouble(VisionConstants.kRightAlignmentOffset)));
 
+                // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
 
         }

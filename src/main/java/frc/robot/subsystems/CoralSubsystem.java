@@ -139,7 +139,7 @@ public class CoralSubsystem extends SubsystemBase {
     SmartDashboard.putData("Coral Subsystem", m_mech2d);
 
     // Zero arm and elevator encoders on initialization
-    // armEncoder.setPosition(0);
+    armEncoder.setPosition(0);
     elevatorEncoder.setPosition(0);
 
     // Initialize simulation values
