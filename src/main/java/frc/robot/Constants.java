@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 
 /**
@@ -75,6 +77,14 @@ public final class Constants {
 
   public static final class ClimberSubsystemConstants {
     public static final int kClimberMotorCanId = 14;
+    public static final double kClimberGearReduction = 64.0; // 64:1 reduction
+    public static final double kClimberSpeed = 1.0; // Speed for climbing
+    public static final double kClimberDownSpeed = -1.0; // Speed for pulling the cage down
+
+    public static final class ArmSetpoints {
+      public static final double kInside = 0.0;
+      public static final double kOutside = 1.0;
+    }
   }
 
   public static final class DriveConstants {
@@ -187,6 +197,21 @@ public final class Constants {
   public static final class VisionConstants {
     public static final String kFrontCameraName = "FrontCamera";
     public static final String kBackCameraName = "BackCamera";
+
+    // Alignment offset distances (in meters)
+    public static final double kLeftAlignmentOffset = -0.5; // 0.5m to the left
+    public static final double kRightAlignmentOffset = 0.5; // 0.5m to the right
+
+    // You can add a NetworkTableEntry to make these adjustable from SmartDashboard
+    public static final NetworkTableEntry LEFT_OFFSET = NetworkTableInstance.getDefault().getTable("Vision")
+        .getEntry("LeftOffset");
+    public static final NetworkTableEntry RIGHT_OFFSET = NetworkTableInstance.getDefault().getTable("Vision")
+        .getEntry("RightOffset");
+
+    static {
+      LEFT_OFFSET.setDouble(kLeftAlignmentOffset);
+      RIGHT_OFFSET.setDouble(kRightAlignmentOffset);
+    }
   }
 
   public static final class SimulationRobotConstants {

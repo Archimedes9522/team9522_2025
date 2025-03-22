@@ -16,16 +16,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.commands.ToggleArmPositionCommand;
+import frc.robot.subsystems.ClimberSubsystem;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
         private final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
+        private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 
@@ -111,17 +115,33 @@ public class RobotContainer {
                 // Start Button -> Zero swerve heading
                 m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
 
-                m_driverController.povDown().onTrue(m_algaeSubsystem.stowCommand());
-
-                // In configureButtonBindings method:
+                // AprilTag alignment commands
+                // Standard alignment (straight to tag)
                 m_driverController.back().whileTrue(new MoveToAprilTagCommand(m_robotDrive, m_visionSubsystem));
+
+                // Left alignment (offset to the left of the tag)
+                m_driverController.back()
+                                .and(m_driverController.povLeft())
+                                .whileTrue(new MoveToAprilTagCommand(m_robotDrive, m_visionSubsystem,
+                                                VisionConstants.LEFT_OFFSET
+                                                                .getDouble(VisionConstants.kLeftAlignmentOffset)));
+
+                // Right alignment (offset to the right of the tag)
+                m_driverController.back()
+                                .and(m_driverController.povRight())
+                                .whileTrue(new MoveToAprilTagCommand(m_robotDrive, m_visionSubsystem,
+                                                VisionConstants.RIGHT_OFFSET
+                                                                .getDouble(VisionConstants.kRightAlignmentOffset)));
+
+                m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
 
         }
 
         public double getSimulationTotalCurrentDraw() {
                 // for each subsystem with simulation
                 return m_coralSubSystem.getSimulationCurrentDraw()
-                                + m_algaeSubsystem.getSimulationCurrentDraw();
+                                + m_algaeSubsystem.getSimulationCurrentDraw()
+                                + climberSubsystem.getSimulationCurrentDraw();
         }
 
         public Command getAutonomousCommand() {

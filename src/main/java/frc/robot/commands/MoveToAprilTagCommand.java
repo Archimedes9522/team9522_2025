@@ -22,13 +22,46 @@ public class MoveToAprilTagCommand extends Command {
     private Pose2d targetPose;
     private boolean foundTarget = false;
 
+    // Alignment offset parameters
+    private final double lateralOffset; // Meters to offset (positive = right, negative = left)
+    private boolean offsetApplied = false;
+
+    // Constructor for standard alignment
     public MoveToAprilTagCommand(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem) {
+        this(driveSubsystem, visionSubsystem, 0.0); // No offset
+    }
+
+    public MoveToAprilTagCommand(DriveSubsystem driveSubsystem, VisionSubsystem visionSubsystem, double lateralOffset) {
         this.driveSubsystem = driveSubsystem;
         this.visionSubsystem = visionSubsystem;
+        this.lateralOffset = lateralOffset;
         addRequirements(driveSubsystem, visionSubsystem);
 
         // Configure rotation controller for -pi to pi range
         rotController.enableContinuousInput(-Math.PI, Math.PI);
+    }
+
+    // Apply lateral offset to the target pose
+    private void applyOffsetToTargetPose() {
+        if (targetPose == null || offsetApplied)
+            return;
+
+        // Calculate the offset direction perpendicular to the tag's facing direction
+        double offsetX = -Math.sin(targetPose.getRotation().getRadians()) * lateralOffset;
+        double offsetY = Math.cos(targetPose.getRotation().getRadians()) * lateralOffset;
+
+        // Create a new target pose with the offset applied
+        targetPose = new Pose2d(
+                targetPose.getX() + offsetX,
+                targetPose.getY() + offsetY,
+                targetPose.getRotation());
+
+        offsetApplied = true;
+
+        // Log the adjusted target
+        SmartDashboard.putString("Offset Target Pose",
+                String.format("X: %.2f, Y: %.2f, Offset: %.2f",
+                        targetPose.getX(), targetPose.getY(), lateralOffset));
     }
 
     @Override
@@ -61,6 +94,9 @@ public class MoveToAprilTagCommand extends Command {
         }
 
         if (foundTarget) {
+            // Apply the offset if needed
+            applyOffsetToTargetPose();
+
             SmartDashboard.putString("Target Pose",
                     String.format("X: %.2f, Y: %.2f, Rot: %.2f",
                             targetPose.getX(), targetPose.getY(),

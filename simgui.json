@@ -5,6 +5,7 @@
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Algae Subsystem": "Mechanism2d",
       "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Climber Subsystem": "Mechanism2d",
       "/SmartDashboard/Coral Subsystem": "Mechanism2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/PathPlanner": "Alerts",
@@ -17,6 +18,11 @@
         }
       },
       "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Climber Subsystem": {
         "window": {
           "visible": true
         }
