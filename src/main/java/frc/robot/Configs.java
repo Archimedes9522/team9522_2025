@@ -99,8 +99,8 @@ public final class Configs {
           .p(0.1)
           .outputRange(-1, 1).maxMotion
           // Set MAXMotion parameters for position control
-          .maxVelocity(5500)
-          .maxAcceleration(8000)
+          .maxVelocity(7500)
+          .maxAcceleration(10000)
           .allowedClosedLoopError(0.5);
 
       // Configure basic settings of the intake motor
@@ -131,6 +131,7 @@ public final class Configs {
 
       // Configure basic settings of the feeder motor
       intakeConfig.inverted(true).idleMode(IdleMode.kBrake).smartCurrentLimit(40);
+      armConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(40);
     }
   }
 

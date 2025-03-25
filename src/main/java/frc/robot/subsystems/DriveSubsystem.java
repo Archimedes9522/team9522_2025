@@ -19,14 +19,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-
-import org.littletonrobotics.junction.LoggedRobot;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -81,7 +80,11 @@ public class DriveSubsystem extends SubsystemBase {
         this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting
         // pose)
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        (speeds, feedforwards) -> driveRobotRelative(speeds), // Method that will drive the robot given ROBOT RELATIVE
+        (speeds, feedforwards) -> drive(
+            speeds.vxMetersPerSecond / DriveConstants.kMaxSpeedMetersPerSecond,
+            speeds.vyMetersPerSecond / DriveConstants.kMaxSpeedMetersPerSecond,
+            speeds.omegaRadiansPerSecond / DriveConstants.kMaxAngularSpeed,
+            false), // Method that will drive the robot given ROBOT RELATIVE
         // ChassisSpeeds. Also optionally outputs individual
         // module feedforwards
         new PPHolonomicDriveController( // PPHolonomicController is the built in path following
@@ -226,17 +229,12 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
-  // differs from DriveSubsystem 2025 REV ION FRC Starter Bot
-  private void driveRobotRelative(ChassisSpeeds speeds) {
-    speeds = new ChassisSpeeds(
-        speeds.vxMetersPerSecond * OIConstants.kDriveSpeedFactor,
-        speeds.vyMetersPerSecond * OIConstants.kDriveSpeedFactor,
-        speeds.omegaRadiansPerSecond);
-    speeds = ChassisSpeeds.discretize(speeds, LoggedRobot.defaultPeriodSecs);
-    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    setModuleStates(swerveModuleStates);
+  public void drive(ChassisSpeeds speeds, boolean fieldRelative) {
+    drive(
+        speeds.vxMetersPerSecond / DriveConstants.kMaxSpeedMetersPerSecond,
+        speeds.vyMetersPerSecond / DriveConstants.kMaxSpeedMetersPerSecond,
+        speeds.omegaRadiansPerSecond / DriveConstants.kMaxAngularSpeed,
+        fieldRelative);
   }
 
   /** Sets the wheels into an X formation to prevent movement. */
