@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    initializeLogging();
     m_robotContainer = new RobotContainer();
     setupSmartDashboard();
   }
@@ -142,6 +144,14 @@ public class Robot extends TimedRobot {
     RoboRioSim.setVInVoltage(
         BatterySim.calculateDefaultBatteryLoadedVoltage(
             m_robotContainer.getSimulationTotalCurrentDraw()));
+  }
+
+  private void initializeLogging() {
+    Logger.recordMetadata("Project Name", BuildConstants.MAVEN_NAME);
+    Logger.recordMetadata("Branch Name", BuildConstants.GIT_BRANCH);
+    Logger.recordMetadata("Commit Hash (Short)", BuildConstants.GIT_SHA.substring(0, 8));
+    Logger.recordMetadata("Commit Hash (Full)", BuildConstants.GIT_SHA);
+    Logger.recordMetadata("Build Time", BuildConstants.BUILD_DATE);
   }
 
   @Override
