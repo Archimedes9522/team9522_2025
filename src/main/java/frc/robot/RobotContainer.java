@@ -19,16 +19,23 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.commands.AlignToCenterOfTagCommand;
+import frc.robot.commands.AlignToLeftOfTagCommand;
+import frc.robot.commands.AlignToRightOfTagCommand;
 import frc.robot.commands.ToggleArmPositionCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
+        private final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+        private final AlignToLeftOfTagCommand m_alignLeftCommand;
+        private final AlignToRightOfTagCommand m_alignRightCommand;
+        private final AlignToCenterOfTagCommand m_alignCenterCommand;
         private boolean isLevel1 = false;
-        private boolean visionModeEnabled = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 
@@ -51,7 +58,10 @@ public class RobotContainer {
                 NamedCommands.registerCommand("setX", m_robotDrive.setXCommand());
                 NamedCommands.registerCommand("zeroHeading", m_robotDrive.zeroHeadingCommand());
 
-                // Auto Setup
+                // Vision Subsystem Commands
+                m_alignLeftCommand = new AlignToLeftOfTagCommand(m_robotDrive, m_visionSubsystem);
+                m_alignRightCommand = new AlignToRightOfTagCommand(m_robotDrive, m_visionSubsystem);
+                m_alignCenterCommand = new AlignToCenterOfTagCommand(m_robotDrive, m_visionSubsystem);
                 configureButtonBindings();
                 autoChooser = AutoBuilder.buildAutoChooser("None");
                 SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -130,15 +140,18 @@ public class RobotContainer {
                 // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
 
-                m_driverController.back().onTrue(Commands.runOnce(() -> {
-                        visionModeEnabled = !visionModeEnabled;
-                        SmartDashboard.putBoolean("Vision Mode Enabled", visionModeEnabled);
-                }));
+                // Vision Alignment Commands
+                // Back button -> Align center to closest tag
+                m_driverController.back().whileTrue(m_alignCenterCommand);
 
-        }
+                // Back + POV left -> Align to left of closest tag
+                m_driverController.back().and(m_driverController.povLeft())
+                                .whileTrue(m_alignLeftCommand);
 
-        public boolean isVisionModeEnabled() {
-                return visionModeEnabled;
+                // Back + POV right -> Align to right of closest tag
+                m_driverController.back().and(m_driverController.povRight())
+                                .whileTrue(m_alignRightCommand);
+
         }
 
         public double getSimulationTotalCurrentDraw() {
