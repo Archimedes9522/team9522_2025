@@ -7,8 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.commands.MoveToAprilTagCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
@@ -27,7 +24,6 @@ import frc.robot.subsystems.ClimberSubsystem;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
-        private final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
@@ -127,24 +123,6 @@ public class RobotContainer {
 
                 // Start Button -> Zero swerve heading
                 m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
-
-                // AprilTag alignment commands
-                // Standard alignment (straight to tag)
-                m_driverController.back().whileTrue(new MoveToAprilTagCommand(m_robotDrive, m_visionSubsystem));
-
-                // Left alignment (offset to the left of the tag)
-                m_driverController.back()
-                                .and(m_driverController.povLeft())
-                                .whileTrue(new MoveToAprilTagCommand(m_robotDrive, m_visionSubsystem,
-                                                VisionConstants.LEFT_OFFSET
-                                                                .getDouble(VisionConstants.kLeftAlignmentOffset)));
-
-                // Right alignment (offset to the right of the tag)
-                m_driverController.back()
-                                .and(m_driverController.povRight())
-                                .whileTrue(new MoveToAprilTagCommand(m_robotDrive, m_visionSubsystem,
-                                                VisionConstants.RIGHT_OFFSET
-                                                                .getDouble(VisionConstants.kRightAlignmentOffset)));
 
                 // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));

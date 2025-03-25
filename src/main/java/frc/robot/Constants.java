@@ -194,26 +194,6 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
-  public static final class VisionConstants {
-    public static final String kFrontCameraName = "FrontCamera";
-    public static final String kBackCameraName = "BackCamera";
-
-    // Alignment offset distances (in meters)
-    public static final double kLeftAlignmentOffset = -0.5; // 0.5m to the left
-    public static final double kRightAlignmentOffset = 0.5; // 0.5m to the right
-
-    // You can add a NetworkTableEntry to make these adjustable from SmartDashboard
-    public static final NetworkTableEntry LEFT_OFFSET = NetworkTableInstance.getDefault().getTable("Vision")
-        .getEntry("LeftOffset");
-    public static final NetworkTableEntry RIGHT_OFFSET = NetworkTableInstance.getDefault().getTable("Vision")
-        .getEntry("RightOffset");
-
-    static {
-      LEFT_OFFSET.setDouble(kLeftAlignmentOffset);
-      RIGHT_OFFSET.setDouble(kRightAlignmentOffset);
-    }
-  }
-
   public static final class SimulationRobotConstants {
     public static final double kPixelsPerMeter = 20;
 
