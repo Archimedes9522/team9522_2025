@@ -6,11 +6,21 @@ package frc.robot;
 
 import com.pathplanner.lib.config.RobotConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.Matrix;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -154,6 +164,15 @@ public final class Constants {
 
     public static final int kDrivingMotorCurrentLimit = 40; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
+
+    // PID
+    public static final double kDriveKP = 1;
+    public static final double kDriveKI = 0;
+    public static final double kDriveKD = 0;
+
+    public static final double kSteerKP = 20;
+    public static final double kSteerKI = 0;
+    public static final double kSteerKD = 0.25;
   }
 
   public static final class OIConstants {
@@ -190,6 +209,29 @@ public final class Constants {
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
+  }
+
+  public static final class VisionConstants {
+    public static final String kFrontCam = "frontCam";
+    public static final String kLeftCam = "leftCam";
+    public static final String kRightCam = "rightCam";
+
+    private static final double camPitch = Units.degreesToRadians(30.0);
+    public static final Transform3d kRobotToFrontCam = new Transform3d(new Translation3d(0.5, 0.0, 0),
+        new Rotation3d(0, -camPitch, 0));
+    public static final Transform3d kRobotToLeftCam = new Transform3d(new Translation3d(-0.25, 0.25, 0),
+        new Rotation3d(0, -camPitch, 0));
+    public static final Transform3d kRobotToRightCam = new Transform3d(new Translation3d(-0.25, -0.25, 0),
+        new Rotation3d(0, -camPitch, 0));
+
+    // The layout of the AprilTags on the field
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+    // The standard deviations of our vision estimated poses, which affect
+    // correction rate
+    // (Fake values. Experiment and determine estimation noise on an actual robot.)
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
   }
 
   public static final class SimulationRobotConstants {
