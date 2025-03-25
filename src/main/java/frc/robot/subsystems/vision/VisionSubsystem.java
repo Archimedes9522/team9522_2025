@@ -2,6 +2,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -55,7 +56,6 @@ public class VisionSubsystem extends SubsystemBase {
         frontCamera = new PhotonCamera("frontCam");
 
         // Define transforms from robot center to each camera
-        // These values need to be measured from your robot's center
         kRobotToLeftCam = new Transform2d(new Translation2d(-0.25, 0.25), new Rotation2d(Math.toRadians(-135)));
         kRobotToRightCam = new Transform2d(new Translation2d(-0.25, -0.25), new Rotation2d(Math.toRadians(135)));
         kRobotToFrontCam = new Transform2d(new Translation2d(0.25, 0), new Rotation2d(Math.toRadians(0)));
