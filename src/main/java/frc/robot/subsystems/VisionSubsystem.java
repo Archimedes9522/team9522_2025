@@ -3,13 +3,10 @@ package frc.robot.subsystems;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -30,7 +27,7 @@ public class VisionSubsystem extends SubsystemBase {
         camera = new PhotonCamera("frontCam");
         robotToCamera = new Transform3d(
                 new Translation3d(0.5, 0, 0.5),
-                new Rotation3d(0, Math.toRadians(-30), 0));
+                new Rotation3d(0, Math.toRadians(30), 0));
 
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
