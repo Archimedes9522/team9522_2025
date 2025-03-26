@@ -12,6 +12,13 @@ public class AutoAlignCommand extends Command {
     // PID controllers for alignment
     private final PIDController rotationController;
     private final PIDController strafeController;
+    private final PIDController distanceController;
+
+    // Target distance in meters
+    private static final double TARGET_DISTANCE = 2.0;
+    private static final double ROTATION_TOLERANCE = 2.0; // degrees
+    private static final double STRAFE_TOLERANCE = 0.05; // meters
+    private static final double DISTANCE_TOLERANCE = 0.1; // meters
 
     // PID constants - these will need tuning
     private static final double ROTATION_P = 0.05;
@@ -21,6 +28,10 @@ public class AutoAlignCommand extends Command {
     private static final double STRAFE_P = 0.1;
     private static final double STRAFE_I = 0.0;
     private static final double STRAFE_D = 0.0;
+
+    private static final double DISTANCE_P = 0.1;
+    private static final double DISTANCE_I = 0.0;
+    private static final double DISTANCE_D = 0.0;
 
     public AutoAlignCommand(DriveSubsystem drive, VisionSubsystem vision) {
         this.driveSubsystem = drive;
@@ -32,6 +43,9 @@ public class AutoAlignCommand extends Command {
         strafeController = new PIDController(STRAFE_P, STRAFE_I, STRAFE_D);
         strafeController.setTolerance(0.05); // 5cm tolerance
 
+        distanceController = new PIDController(DISTANCE_P, DISTANCE_I, DISTANCE_D);
+        distanceController.setTolerance(0.1); // 10cm
+
         addRequirements(drive, vision);
     }
 
@@ -39,30 +53,52 @@ public class AutoAlignCommand extends Command {
     public void execute() {
         if (visionSubsystem.hasTargets()) {
             var target = visionSubsystem.getBestTarget();
+            var robotPose = driveSubsystem.getPose();
+            var targetPoseOpt = visionSubsystem.getTargetPose(target);
 
-            // Calculate rotation correction (yaw)
-            double rotationSpeed = -rotationController.calculate(target.getYaw(), 0);
+            if (targetPoseOpt.isPresent()) {
+                var targetPose = targetPoseOpt.get();
 
-            // Drive to align with target
-            driveSubsystem.drive(
-                    0, // No forward/backward movement while aligning
-                    strafeController.calculate(target.getYaw(), 0), // Strafe to center
-                    rotationSpeed, // Rotate to face target
-                    true // Field relative
-            );
+                // Calculate vector to target
+                double dx = targetPose.getX() - robotPose.getX();
+                double dy = targetPose.getY() - robotPose.getY();
+                double currentDistance = Math.sqrt(dx * dx + dy * dy);
+
+                // Calculate desired heading to target
+                double targetAngle = Math.toDegrees(Math.atan2(dy, dx));
+
+                // Calculate control outputs
+                double rotationSpeed = rotationController.calculate(
+                        robotPose.getRotation().getDegrees(),
+                        targetAngle);
+
+                double strafeSpeed = strafeController.calculate(
+                        0, // Current offset
+                        target.getYaw() // Desired yaw (center target)
+                );
+
+                double forwardSpeed = distanceController.calculate(
+                        currentDistance,
+                        TARGET_DISTANCE);
+
+                // Drive to align with target
+                driveSubsystem.drive(
+                        forwardSpeed,
+                        strafeSpeed,
+                        rotationSpeed,
+                        true);
+            }
         } else {
-            // No target visible, stop moving
             driveSubsystem.stop();
         }
     }
 
     @Override
     public boolean isFinished() {
-        if (!visionSubsystem.hasTargets()) {
-            return false;
-        }
-        // Command is done when we're aligned within tolerance
-        return rotationController.atSetpoint() && strafeController.atSetpoint();
+        return visionSubsystem.hasTargets() &&
+                rotationController.atSetpoint() &&
+                strafeController.atSetpoint() &&
+                distanceController.atSetpoint();
     }
 
     @Override

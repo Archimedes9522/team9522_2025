@@ -104,8 +104,76 @@ To do this, we’ll use the pitch of the target in the camera image and trigonom
   //Using WPILib Pose Estimation, Simulation, and PhotonVision Together
   This example demonstrates integration of swerve drive control, a basic swerve physics simulation, and PhotonLib’s simulated vision system functionality.
   Estimating Pose
-The Drivetrain class includes functionality to fuse multiple sensor readings together (including PhotonVision) into a best-guess of the pose on the field.
+    The Drivetrain class includes functionality to fuse multiple sensor readings together (including PhotonVision) into a best-guess of the pose on the field.
 
-Please reference the WPILib documentation on using the SwerveDrivePoseEstimator class.
+    Please reference the WPILib documentation on using the SwerveDrivePoseEstimator class.
 
-We use the 2024 game’s AprilTag Locations:
+    We use the 2024 game’s AprilTag Locations:
+
+    visionSim.addAprilTags(kTagLayout);
+
+    To incorporate PhotonVision, we need to create a PhotonCamera:
+
+    camera = new PhotonCamera(kCameraName);
+
+    During periodic execution, we read back camera results. If we see AprilTags in the image, we calculate the camera-measured pose of the robot and pass it to the Drivetrain.
+
+      // Correct pose estimate with vision measurements
+      var visionEst = vision.getEstimatedGlobalPose();
+      visionEst.ifPresent(
+              est -> {
+                  // Change our trust in the measurement based on the tags we can see
+                  var estStdDevs = vision.getEstimationStdDevs();
+
+                  drivetrain.addVisionMeasurement(
+                          est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+              });
+
+Simulating the Camera
+    First, we create a new VisionSystemSim to represent our camera and coprocessor running PhotonVision, and moving around our simulated field.
+
+      // Create the vision system simulation which handles cameras and targets on the field.
+      visionSim = new VisionSystemSim("main");
+      // Add all the AprilTags inside the tag layout as visible targets to this simulated field.
+      visionSim.addAprilTags(kTagLayout);
+      // Create simulated camera properties. These can be set to mimic your actual camera.
+
+      Then, we add configure the simulated vision system to match the camera system being simulated.
+
+        // Create simulated camera properties. These can be set to mimic your actual camera.
+        var cameraProp = new SimCameraProperties();
+        cameraProp.setCalibration(960, 720, Rotation2d.fromDegrees(90));
+        cameraProp.setCalibError(0.35, 0.10);
+        cameraProp.setFPS(15);
+        cameraProp.setAvgLatencyMs(50);
+        cameraProp.setLatencyStdDevMs(15);
+        // Create a PhotonCameraSim which will update the linked PhotonCamera's values with visible
+        // targets.
+        cameraSim = new PhotonCameraSim(camera, cameraProp);
+        // Add the simulated camera to view the targets on this simulated field.
+        visionSim.addCamera(cameraSim, kRobotToCam);
+
+        cameraSim.enableDrawWireframe(true);
+
+Updating the Simulated Vision System
+    During simulation, we periodically update the simulated vision system.
+
+    @Override
+    public void simulationPeriodic() {
+        // Update drivetrain simulation
+        drivetrain.simulationPeriodic();
+
+        // Update camera simulation
+        vision.simulationPeriodic(drivetrain.getSimPose());
+
+        var debugField = vision.getSimDebugField();
+        debugField.getObject("EstimatedRobot").setPose(drivetrain.getPose());
+        debugField.getObject("EstimatedRobotModules").setPoses(drivetrain.getModulePoses());
+
+        // Update gamepiece launcher simulation
+        gpLauncher.simulationPeriodic();
+
+        // Calculate battery voltage sag due to current draw
+        RoboRioSim.setVInVoltage(
+                BatterySim.calculateDefaultBatteryLoadedVoltage(drivetrain.getCurrentDraw()));
+    }

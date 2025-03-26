@@ -28,7 +28,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 
 public class DriveSubsystem extends SubsystemBase {
-
   private RobotConfig config;
 
   // Create MAXSwerveModules
