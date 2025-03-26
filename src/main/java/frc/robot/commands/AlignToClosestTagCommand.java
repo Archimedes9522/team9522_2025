@@ -19,7 +19,7 @@ public class AlignToClosestTagCommand extends Command {
     private final PhotonCamera frontCamera;
     private final PhotonCamera backCamera;
     private Command pathCommand;
-    private final double TARGET_DISTANCE = 1.0; // meters from tag
+    private final double TARGET_DISTANCE = 1.0;
     private final AprilTagFieldLayout fieldLayout;
 
     public AlignToClosestTagCommand(DriveSubsystem driveSubsystem, PhotonCamera frontCam, PhotonCamera backCam) {
@@ -38,70 +38,72 @@ public class AlignToClosestTagCommand extends Command {
     @Override
     public void initialize() {
         pathCommand = null;
+        PhotonTrackedTarget closestTarget = findClosestTarget();
+        if (closestTarget != null) {
+            generatePathToTarget(closestTarget);
+        }
     }
 
     @Override
     public void execute() {
-        if (pathCommand != null && !pathCommand.isFinished()) {
-            return; // Wait for current path to finish
+        if (pathCommand == null) {
+            end(true);
+            return;
         }
+    }
 
-        // Find closest visible tag
+    private PhotonTrackedTarget findClosestTarget() {
         var frontResult = frontCamera.getLatestResult();
         var backResult = backCamera.getLatestResult();
 
         PhotonTrackedTarget closestTarget = null;
         double closestDistance = Double.MAX_VALUE;
-        boolean useFrontCamera = true;
 
-        // Check front camera
         if (frontResult.hasTargets()) {
             for (var target : frontResult.getTargets()) {
                 double dist = target.getBestCameraToTarget().getTranslation().getNorm();
                 if (dist < closestDistance) {
                     closestDistance = dist;
                     closestTarget = target;
-                    useFrontCamera = true;
                 }
             }
         }
 
-        // Check back camera
         if (backResult.hasTargets()) {
             for (var target : backResult.getTargets()) {
                 double dist = target.getBestCameraToTarget().getTranslation().getNorm();
                 if (dist < closestDistance) {
                     closestDistance = dist;
                     closestTarget = target;
-                    useFrontCamera = false;
                 }
             }
         }
 
-        if (closestTarget != null) {
-            Optional<Pose3d> targetPose = fieldLayout.getTagPose(closestTarget.getFiducialId());
-            if (targetPose.isPresent()) {
-                Pose2d targetPose2d = targetPose.get().toPose2d();
-                // Position robot in front of tag
-                Pose2d adjustedPose = new Pose2d(
-                        targetPose2d.getTranslation().plus(
-                                new Translation2d(-TARGET_DISTANCE, 0.0).rotateBy(targetPose2d.getRotation())),
-                        targetPose2d.getRotation());
+        return closestTarget;
+    }
 
-                PathConstraints constraints = new PathConstraints(
-                        2.0, // max velocity
-                        2.0, // max acceleration
-                        360.0, // max angular velocity
-                        360.0 // max angular acceleration
-                );
+    private void generatePathToTarget(PhotonTrackedTarget target) {
+        Optional<Pose3d> targetPose = fieldLayout.getTagPose(target.getFiducialId());
 
-                pathCommand = AutoBuilder.pathfindToPose(
-                        adjustedPose,
-                        constraints,
-                        0.0 // goal end velocity
-                );
-                pathCommand.schedule();
-            }
+        if (targetPose.isPresent()) {
+            Pose2d targetPose2d = targetPose.get().toPose2d();
+            Pose2d adjustedPose = new Pose2d(
+                    targetPose2d.getTranslation().plus(
+                            new Translation2d(-TARGET_DISTANCE, 0.0).rotateBy(targetPose2d.getRotation())),
+                    targetPose2d.getRotation());
+
+            PathConstraints constraints = new PathConstraints(
+                    2.0, // max velocity
+                    2.0, // max acceleration
+                    360.0, // max angular velocity
+                    360.0 // max angular acceleration
+            );
+
+            pathCommand = AutoBuilder.pathfindToPose(
+                    adjustedPose,
+                    constraints,
+                    0.0);
+            pathCommand.schedule();
         }
     }
 
@@ -115,6 +117,6 @@ public class AlignToClosestTagCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return false; // Run until interrupted
+        return pathCommand != null && pathCommand.isFinished();
     }
 }

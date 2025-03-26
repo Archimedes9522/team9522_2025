@@ -133,7 +133,7 @@ public class RobotContainer {
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
 
                 m_driverController.rightStick()
-                                .whileTrue(new AlignToClosestTagCommand(m_robotDrive, frontCamera, backCamera));
+                                .onTrue(new AlignToClosestTagCommand(m_robotDrive, frontCamera, backCamera));
         }
 
         public double getSimulationTotalCurrentDraw() {
