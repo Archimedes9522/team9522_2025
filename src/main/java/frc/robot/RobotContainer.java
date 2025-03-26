@@ -19,11 +19,14 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.commands.AutoAlignCommand;
 import frc.robot.commands.ToggleArmPositionCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
+        private final VisionSubsystem m_vision = new VisionSubsystem();
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
@@ -126,6 +129,9 @@ public class RobotContainer {
 
                 // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
+
+                m_driverController.back()
+                                .whileTrue(new AutoAlignCommand(m_robotDrive, m_vision));
 
         }
 
