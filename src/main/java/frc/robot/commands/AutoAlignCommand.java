@@ -11,10 +11,10 @@ public class AutoAlignCommand extends Command {
     private final VisionSubsystem visionSubsystem;
     private final PIDController rotationController;
 
-    // PID constants for rotation only
-    private static final double ROTATION_P = 0.005;
-    private static final double ROTATION_I = 0.0;
-    private static final double ROTATION_D = 0.0;
+    // Tune these PID constants
+    private static final double ROTATION_P = 0.01; // Start small
+    private static final double ROTATION_I = 0.005;
+    private static final double ROTATION_D = 0.005;
     private static final double TOLERANCE_DEGREES = 2.0;
 
     public AutoAlignCommand(DriveSubsystem drive, VisionSubsystem vision) {
@@ -24,7 +24,6 @@ public class AutoAlignCommand extends Command {
         rotationController = new PIDController(ROTATION_P, ROTATION_I, ROTATION_D);
         rotationController.setTolerance(TOLERANCE_DEGREES);
         rotationController.enableContinuousInput(-180, 180);
-
         addRequirements(drive, vision);
     }
 
@@ -32,37 +31,20 @@ public class AutoAlignCommand extends Command {
     public void execute() {
         if (visionSubsystem.hasTargets()) {
             var target = visionSubsystem.getBestTarget();
-            var robotPose = driveSubsystem.getPose();
-            var targetPoseOpt = visionSubsystem.getTargetPose(target);
 
-            if (targetPoseOpt.isPresent()) {
-                var targetPose = targetPoseOpt.get();
+            // Use yaw directly - this represents degrees off center
+            double rotationSpeed = rotationController.calculate(target.getYaw(), 0);
 
-                // Calculate relative vector
-                double dx = targetPose.getX() - robotPose.getX();
-                double dy = targetPose.getY() - robotPose.getY();
+            // Apply a maximum rotation speed limit
+            rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
 
-                // Calculate angle relative to current robot heading
-                double targetAngle = Math.toDegrees(Math.atan2(dy, dx));
-                double currentAngle = robotPose.getRotation().getDegrees();
-                double relativeAngle = targetAngle - currentAngle;
-
-                // Normalize to -180 to 180
-                relativeAngle = relativeAngle % 360;
-                if (relativeAngle > 180)
-                    relativeAngle -= 360;
-                if (relativeAngle < -180)
-                    relativeAngle += 360;
-
-                // Calculate rotation speed
-                double rotationSpeed = rotationController.calculate(0, relativeAngle);
-                rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
-
-                // Drive with rotation only
-                driveSubsystem.drive(0, 0, rotationSpeed, false);
-
-                System.out.println("RelAngle: " + relativeAngle + " Rot: " + rotationSpeed);
-            }
+            // Drive with only rotation
+            driveSubsystem.drive(
+                    0, // No forward/backward
+                    0, // No strafe
+                    rotationSpeed,
+                    true // Field relative
+            );
         } else {
             driveSubsystem.stop();
         }
