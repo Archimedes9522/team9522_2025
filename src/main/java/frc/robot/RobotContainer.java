@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -19,17 +21,17 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.commands.AutoAlignCommand;
+import frc.robot.commands.AlignToClosestTagCommand;
 import frc.robot.commands.ToggleArmPositionCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
-        private final VisionSubsystem m_vision = new VisionSubsystem();
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+        private final PhotonCamera frontCamera = new PhotonCamera("frontCam");
+        private final PhotonCamera backCamera = new PhotonCamera("backCam");
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -130,9 +132,8 @@ public class RobotContainer {
                 // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
 
-                m_driverController.back()
-                                .whileTrue(new AutoAlignCommand(m_robotDrive, m_vision));
-
+                m_driverController.rightStick()
+                                .whileTrue(new AlignToClosestTagCommand(m_robotDrive, frontCamera, backCamera));
         }
 
         public double getSimulationTotalCurrentDraw() {
