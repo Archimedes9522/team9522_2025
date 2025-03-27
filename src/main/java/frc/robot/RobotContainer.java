@@ -10,12 +10,14 @@ import com.pathplanner.lib.auto.NamedCommands;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.AlgaeSubsystem;
@@ -39,6 +41,8 @@ public class RobotContainer {
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+        private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
+        private final Vision vision;
 
         // Cameras
         boolean cameraEnabled = false;
@@ -139,6 +143,24 @@ public class RobotContainer {
 
                 // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
+
+                @SuppressWarnings("resource")
+                PIDController aimController = new PIDController(0.2, 0.0, 0.0);
+                aimController.enableContinuousInput(-Math.PI, Math.PI);
+                keyboard
+                                .button(1)
+                                .whileTrue(
+                                                Commands.startRun(
+                                                                () -> {
+                                                                        aimController.reset();
+                                                                },
+                                                                () -> {
+                                                                        m_robotDrive.run(0.0,
+                                                                                        aimController.calculate(vision
+                                                                                                        .getTargetX(0)
+                                                                                                        .getRadians()));
+                                                                },
+                                                                m_robotDrive));
 
         }
 
