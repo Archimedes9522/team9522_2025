@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -24,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -216,6 +219,60 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         },
         pose);
+  }
+
+  public Pose2d calculateTagOffset(
+      Pose2d tagPose,
+      double horizontalOffset,
+      double distantOffset,
+      boolean moveRight,
+      boolean faceTag) {
+    if (tagPose == null) {
+      return null;
+    }
+
+    // Convert tag heading to radians
+    double tagRadians = tagPose.getRotation().getRadians();
+
+    // The direction perpendicular to the tag face
+    // We'll use this to position the robot horizontally relative to the tag
+    double perpendicularDirection = tagRadians + (moveRight ? Math.PI / 2 : -Math.PI / 2);
+
+    // Calculate the position at the desired distance from the tag
+    // This is where we want either the front or back of the robot to be
+    double targetX = tagPose.getX() + horizontalOffset * Math.cos(perpendicularDirection);
+    double targetY = tagPose.getY() + horizontalOffset * Math.sin(perpendicularDirection);
+
+    // Calculate the robot's facing direction based on faceTag parameter
+    // If faceTag is true: face the tag (180 degrees from tag direction)
+    // If faceTag is false: face away from tag (same direction as tag)
+    double robotFacingRadians = faceTag ? (tagRadians + Math.PI) : tagRadians;
+    Rotation2d robotFacing = new Rotation2d(robotFacingRadians);
+
+    // Calculate the additional offset needed for the robot's center
+    double robotHalfLength = Units.inchesToMeters(18.0 + distantOffset);
+
+    // Key change: Direction of offset depends on which bumper we're aligning
+    // When facing the tag: front bumper aligns, so subtract offset in the facing
+    // direction
+    // When facing away: back bumper aligns, so add offset in the facing direction
+    double directionMultiplier = faceTag ? -1.0 : 1.0;
+
+    // Calculate the offset from target position to robot center
+    double centerOffsetX = directionMultiplier * robotHalfLength * Math.cos(robotFacingRadians);
+    double centerOffsetY = directionMultiplier * robotHalfLength * Math.sin(robotFacingRadians);
+
+    // Final pose positions the robot so the appropriate bumper is at the desired
+    // offset from the
+    // tag
+    Pose2d finalPose = new Pose2d(targetX + centerOffsetX, targetY + centerOffsetY, robotFacing);
+
+    // Log everything for debugging
+    Logger.recordOutput("AutoAlign/TagPose", tagPose);
+    Logger.recordOutput("AutoAlign/TargetPosition", new Pose2d(targetX, targetY, robotFacing));
+    Logger.recordOutput("AutoAlign/FinalPose", finalPose);
+
+    return finalPose;
   }
 
   /**

@@ -35,6 +35,7 @@ import org.photonvision.PhotonCamera;
 
 public class VisionSubsystem extends SubsystemBase {
     private final VisionConsumer consumer;
+    private final VisionIOInputsAutoLogged[] inputs;
 
     // Camera objects
     private final PhotonCamera[] cameras;
@@ -65,6 +66,21 @@ public class VisionSubsystem extends SubsystemBase {
         MEGATAG_1,
         MEGATAG_2,
         PHOTONVISION
+    }
+
+    public Pose2d getClosestTagPose(int cameraIndex, Pose2d currentPose) {
+        // Check if the closest tag is essentially at origin (0,0,0), indicating no
+        // valid detection
+        Pose2d tagPose = inputs[cameraIndex].closestTag.toPose2d();
+
+        // Check if this is essentially the origin
+        if (Math.abs(tagPose.getX()) < 0.001 && Math.abs(tagPose.getY()) < 0.001) {
+            // No valid tag detected, return robot pose instead (no darting off to origin on
+            // accident)
+            return currentPose;
+        }
+
+        return tagPose;
     }
 
     /**

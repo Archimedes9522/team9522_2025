@@ -26,8 +26,10 @@ import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.vision.*;
 import frc.robot.commands.ToggleArmPositionCommand;
+import frc.robot.commands.DriverAssistCommands;
 import frc.robot.subsystems.ClimberSubsystem;
 import static frc.robot.subsystems.vision.VisionConstants.*;
+import java.util.function.BooleanSupplier;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
@@ -41,7 +43,6 @@ public class RobotContainer {
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
-        private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
         private final Vision vision;
 
         // Cameras
@@ -144,23 +145,29 @@ public class RobotContainer {
                 // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
 
-                @SuppressWarnings("resource")
-                PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-                aimController.enableContinuousInput(-Math.PI, Math.PI);
-                keyboard
-                                .button(1)
-                                .whileTrue(
-                                                Commands.startRun(
-                                                                () -> {
-                                                                        aimController.reset();
-                                                                },
-                                                                () -> {
-                                                                        m_robotDrive.run(0.0,
-                                                                                        aimController.calculate(vision
-                                                                                                        .getTargetX(0)
-                                                                                                        .getRadians()));
-                                                                },
-                                                                m_robotDrive));
+                // Function to check if driver is using joysticks (for cancellation)
+                final double JOYSTICK_DEADBAND = 0.15;
+                BooleanSupplier driverInputDetected = () -> Math.abs(m_driverController.getLeftX()) > JOYSTICK_DEADBAND
+                                || Math.abs(m_driverController.getLeftY()) > JOYSTICK_DEADBAND
+                                || Math.abs(m_driverController.getRightX()) > JOYSTICK_DEADBAND;
+
+                // Auto align to right of reef tag (button press)
+                m_driverController
+                                .rightTrigger(0.2)
+                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, vision, true,
+                                                driverInputDetected));
+
+                // Auto align to left of reef tag (button press)
+                m_driverController
+                                .leftTrigger(0.2)
+                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, vision, false,
+                                                driverInputDetected));
+
+                // Auto align to coral station tag (button press)
+                m_driverController
+                                .y()
+                                .onTrue(DriverAssistCommands.alignToCoralTag(m_robotDrive, vision,
+                                                driverInputDetected));
 
         }
 
