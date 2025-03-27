@@ -12,10 +12,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -210,6 +213,29 @@ public final class Constants {
         e.printStackTrace();
       }
     }
+  }
+
+  public class VisionConstants {
+    // AprilTag layout
+    public static AprilTagFieldLayout aprilTagLayout = AprilTagFieldLayout
+        .loadField(AprilTagFields.k2025ReefscapeWelded);
+
+    // Camera names - update these to match your camera names
+    public static String frontCameraName = "frontCamera";
+    public static String backCameraName = "backCamera";
+
+    // Robot to camera transforms - update measurements for your robot
+    public static Transform3d robotToFrontCamera = new Transform3d(
+        Units.inchesToMeters(14), // X forward
+        Units.inchesToMeters(-3), // Y left
+        Units.inchesToMeters(7.5), // Z up
+        new Rotation3d(0.0, 0.0, 0.0));
+
+    // Vision processing constants
+    public static double maxAmbiguity = 0.3;
+    public static double maxZError = 0.75;
+    public static double linearStdDevBaseline = 0.02;
+    public static double angularStdDevBaseline = 0.06;
   }
 
   public static final class NeoMotorConstants {
