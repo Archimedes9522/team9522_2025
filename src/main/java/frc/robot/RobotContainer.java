@@ -7,8 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import org.photonvision.PhotonCamera;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,10 +30,6 @@ public class RobotContainer {
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
-
-        // Cameras
-        boolean cameraEnabled = false;
-        PhotonCamera camera = new PhotonCamera("backCamera");
 
         public RobotContainer() {
                 // Coral Subsystem Commands
