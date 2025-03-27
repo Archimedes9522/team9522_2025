@@ -43,7 +43,6 @@ public class RobotContainer {
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
-        private final Vision vision;
 
         // Cameras
         boolean cameraEnabled = false;
@@ -154,19 +153,19 @@ public class RobotContainer {
                 // Auto align to right of reef tag (button press)
                 m_driverController
                                 .rightTrigger(0.2)
-                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, vision, true,
+                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, true,
                                                 driverInputDetected));
 
                 // Auto align to left of reef tag (button press)
                 m_driverController
                                 .leftTrigger(0.2)
-                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, vision, false,
+                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, false,
                                                 driverInputDetected));
 
                 // Auto align to coral station tag (button press)
                 m_driverController
                                 .y()
-                                .onTrue(DriverAssistCommands.alignToCoralTag(m_robotDrive, vision,
+                                .onTrue(DriverAssistCommands.alignToCoralTag(m_robotDrive, visionSubsystem,
                                                 driverInputDetected));
 
         }
