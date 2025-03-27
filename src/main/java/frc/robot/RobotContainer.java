@@ -4,12 +4,21 @@
 
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.PIDConstants;
+
+import static edu.wpi.first.units.Units.*;
+
+import java.util.function.BooleanSupplier;
+
+import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,7 +30,6 @@ import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.commands.AlignToClosestTagCommand;
 import frc.robot.commands.ToggleArmPositionCommand;
 import frc.robot.subsystems.ClimberSubsystem;
 
@@ -30,11 +38,13 @@ public class RobotContainer {
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-        private final PhotonCamera frontCamera = new PhotonCamera("frontCam");
-        private final PhotonCamera backCamera = new PhotonCamera("backCam");
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+
+        // Cameras
+        boolean cameraEnabled = false;
+        PhotonCamera camera = new PhotonCamera("backCamera");
 
         public RobotContainer() {
                 // Coral Subsystem Commands
@@ -131,9 +141,6 @@ public class RobotContainer {
 
                 // POV Down -> Move climber arm to inside/outside position
                 m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
-
-                m_driverController.rightStick()
-                                .onTrue(new AlignToClosestTagCommand(m_robotDrive, frontCamera, backCamera));
         }
 
         public double getSimulationTotalCurrentDraw() {

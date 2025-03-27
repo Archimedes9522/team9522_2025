@@ -10,7 +10,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.I2C;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -28,6 +33,25 @@ public final class Constants {
 
   public static final int kSetXButton = XboxController.Button.kRightBumper.value;
 
+  public static final Mode simMode = Mode.SIM;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+
+  public static final Translation2d zeroTranslation2d = new Translation2d();
+  public static final Rotation2d zeroRotation2d = new Rotation2d();
+  public static final Pose2d zeroPose2d = new Pose2d();
+  public static final Pose3d zeroPose3d = new Pose3d();
+
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
+
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
+
   public static final class CoralSubsystemConstants {
     public static final int kElevatorMotorCanId = 9;
     public static final int kArmMotorCanId = 10;
@@ -38,7 +62,7 @@ public final class Constants {
       public static final int kLevel1 = 0;
       public static final int kLevel2 = 0;
       public static final int kLevel3 = 100;
-      public static final int kLevel4 = 175;
+      public static final int kLevel4 = 180;
     }
 
     public static final class ArmSetpoints {
@@ -46,7 +70,7 @@ public final class Constants {
       public static final double kLevel1 = 0;
       public static final double kLevel2 = 2;
       public static final double kLevel3 = 2;
-      public static final double kLevel4 = 7.5;
+      public static final double kLevel4 = 8;
     }
 
     public static final class IntakeSetpoints {

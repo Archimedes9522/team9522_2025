@@ -6,6 +6,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.studica.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -38,8 +39,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    Threads.setCurrentThreadPriority(true, 99);
     CommandScheduler.getInstance().run();
     updateSmartDashboard();
+    Threads.setCurrentThreadPriority(false, 10);
   }
 
   @Override

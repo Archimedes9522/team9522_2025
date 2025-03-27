@@ -12,6 +12,7 @@ import com.studica.frc.AHRS;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -19,16 +20,17 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
 
 public class DriveSubsystem extends SubsystemBase {
   private RobotConfig config;
+  private final SwerveDrivePoseEstimator poseEstimator;
 
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
@@ -139,6 +141,28 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Usage reporting for MAXSwerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_MaxSwerve);
+  }
+
+  public Drive() {
+    // Initialize pose estimator with starting pose
+    poseEstimator = new SwerveDrivePoseEstimator(
+        DriveConstants.kinematics,
+        getGyroRotation(),
+        getModulePositions(),
+        new Pose2d()
+    );
+}
+
+  /** Adds vision measurement for pose estimation */
+  public void addVisionMeasurement(
+      Pose2d visionRobotPoseMeters,
+      double timestampSeconds,
+      Matrix<N3, N1> visionMeasurementStdDevs) {
+
+    poseEstimator.addVisionMeasurement(
+        visionRobotPoseMeters,
+        timestampSeconds,
+        visionMeasurementStdDevs);
   }
 
   @Override

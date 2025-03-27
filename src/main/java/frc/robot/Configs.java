@@ -71,8 +71,8 @@ public final class Configs {
           .positionWrappingEnabled(true)
           .positionWrappingInputRange(0, 2 * Math.PI).maxMotion
           // Set MAXMotion parameters for position control
-          .maxVelocity(2000)
-          .maxAcceleration(10000)
+          .maxVelocity(3000)
+          .maxAcceleration(8000)
           .allowedClosedLoopError(.25);
 
       // Configure basic settings of the elevator motor
@@ -99,8 +99,8 @@ public final class Configs {
           .p(0.1)
           .outputRange(-1, 1).maxMotion
           // Set MAXMotion parameters for position control
-          .maxVelocity(7500)
-          .maxAcceleration(10000)
+          .maxVelocity(8000)
+          .maxAcceleration(8000)
           .allowedClosedLoopError(0.5);
 
       // Configure basic settings of the intake motor
