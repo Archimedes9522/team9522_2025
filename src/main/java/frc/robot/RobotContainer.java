@@ -146,19 +146,19 @@ public class RobotContainer {
 
                 // Auto align to right of reef tag (button press)
                 m_driverController
-                                .rightTrigger(0.2)
+                                .povRight()
                                 .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, true,
                                                 driverInputDetected));
 
                 // Auto align to left of reef tag (button press)
                 m_driverController
-                                .leftTrigger(0.2)
+                                .povLeft()
                                 .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, false,
                                                 driverInputDetected));
 
                 // Auto align to coral station tag (button press)
                 m_driverController
-                                .y()
+                                .povUp()
                                 .onTrue(DriverAssistCommands.alignToCoralTag(m_robotDrive, visionSubsystem,
                                                 driverInputDetected));
 
