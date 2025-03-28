@@ -96,6 +96,12 @@ public class VisionSubsystem extends SubsystemBase {
         this.consumer = consumer;
         this.robotToCameras = robotToCameras;
 
+        // Initialize inputs
+        this.inputs = new VisionIOInputsAutoLogged[cameraNames.length];
+        for (int i = 0; i < cameraNames.length; i++) {
+            inputs[i] = new VisionIOInputsAutoLogged();
+        }
+
         // Initialize camera objects
         int cameraCount = cameraNames.length;
         this.cameras = new PhotonCamera[cameraCount];
