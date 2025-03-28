@@ -36,10 +36,8 @@ public class RobotContainer {
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-        private final VisionSubsystem visionSubsystem = new VisionSubsystem(
-                        m_robotDrive::addVisionMeasurement,
-                        new String[] { camera0Name },
-                        new Transform3d[] { robotToCamera0 });
+        private final VisionSubsystem visionSubsystem = new VisionSubsystem(m_robotDrive::addVisionMeasurement);
+
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;
         CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
