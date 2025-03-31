@@ -7,88 +7,18 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "Data",
-            "x": 0.0,
-            "y": 0.0,
+            "title": "Coral",
+            "x": 256.0,
+            "y": 256.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "LEFT"
             },
             "children": [
               {
-                "title": "Gyro angle",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Gyro angle",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Gyro pitch",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Gyro pitch",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Gyro roll",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Gyro roll",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "EPos",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Coral/Elevator/Actual Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "ETPos",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Coral/Elevator/Target Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "CPos",
+                "title": "Arm_APos",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -102,7 +32,7 @@
                 }
               },
               {
-                "title": "CTPos",
+                "title": "Arm_TPos",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -116,7 +46,35 @@
                 }
               },
               {
-                "title": "CIntOut",
+                "title": "Elv_APos",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Coral/Elevator/Actual Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Elv_TPos",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Coral/Elevator/Target Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Int_Output",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -147,7 +105,7 @@
           },
           {
             "title": "Field",
-            "x": 256.0,
+            "x": 0.0,
             "y": 0.0,
             "width": 512.0,
             "height": 256.0,
@@ -167,7 +125,7 @@
           },
           {
             "title": "Robot Velocity",
-            "x": 1024.0,
+            "x": 768.0,
             "y": 0.0,
             "width": 256.0,
             "height": 256.0,
@@ -188,7 +146,7 @@
           },
           {
             "title": "Match Time",
-            "x": 768.0,
+            "x": 1280.0,
             "y": 0.0,
             "width": 256.0,
             "height": 256.0,
@@ -221,7 +179,7 @@
           },
           {
             "title": "Swerve",
-            "x": 1280.0,
+            "x": 512.0,
             "y": 0.0,
             "width": 256.0,
             "height": 256.0,
@@ -235,7 +193,7 @@
           },
           {
             "title": "Auto Chooser",
-            "x": 768.0,
+            "x": 0.0,
             "y": 256.0,
             "width": 256.0,
             "height": 256.0,
@@ -265,27 +223,27 @@
             }
           },
           {
-            "title": "USB Camera 0",
-            "x": 256.0,
+            "title": "Update Alliance LEDs",
+            "x": 896.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 256.0,
-            "type": "Camera Stream",
+            "type": "Toggle Button",
             "properties": {
-              "topic": "/CameraPublisher/USB Camera 0",
+              "topic": "/SmartDashboard/Update Alliance LEDs",
               "period": 0.06,
-              "rotation_turns": 0
+              "data_type": "boolean"
             }
           },
           {
-            "title": "USB Camera 1",
-            "x": 512.0,
-            "y": 256.0,
+            "title": "photonvision_Port_1182_Output_MJPEG_Server",
+            "x": 1024.0,
+            "y": 0.0,
             "width": 256.0,
             "height": 256.0,
             "type": "Camera Stream",
             "properties": {
-              "topic": "/CameraPublisher/USB Camera 1",
+              "topic": "/CameraPublisher/photonvision_Port_1182_Output_MJPEG_Server",
               "period": 0.06,
               "rotation_turns": 0
             }
@@ -298,88 +256,18 @@
       "grid_layout": {
         "layouts": [
           {
-            "title": "Data",
-            "x": 0.0,
-            "y": 0.0,
+            "title": "Coral",
+            "x": 256.0,
+            "y": 256.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 256.0,
             "type": "List Layout",
             "properties": {
               "label_position": "LEFT"
             },
             "children": [
               {
-                "title": "Gyro angle",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Gyro angle",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Gyro pitch",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Gyro pitch",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Gyro roll",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Gyro roll",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "EPos",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Coral/Elevator/Actual Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "ETPos",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/SmartDashboard/Coral/Elevator/Target Position",
-                  "period": 0.06,
-                  "data_type": "double",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "CPos",
+                "title": "Arm_APos",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -393,7 +281,7 @@
                 }
               },
               {
-                "title": "CTPos",
+                "title": "Arm_TPos",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -407,7 +295,35 @@
                 }
               },
               {
-                "title": "CIntOut",
+                "title": "Elv_APos",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Coral/Elevator/Actual Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Elv_TPos",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Coral/Elevator/Target Position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Int_Output",
                 "x": 0.0,
                 "y": 0.0,
                 "width": 128.0,
@@ -438,7 +354,7 @@
           },
           {
             "title": "Field",
-            "x": 256.0,
+            "x": 0.0,
             "y": 0.0,
             "width": 512.0,
             "height": 256.0,
@@ -458,8 +374,8 @@
           },
           {
             "title": "Robot Velocity",
-            "x": 1024.0,
-            "y": 0.0,
+            "x": 512.0,
+            "y": 256.0,
             "width": 256.0,
             "height": 256.0,
             "type": "Radial Gauge",
@@ -479,7 +395,7 @@
           },
           {
             "title": "Match Time",
-            "x": 768.0,
+            "x": 1280.0,
             "y": 0.0,
             "width": 256.0,
             "height": 256.0,
@@ -530,7 +446,7 @@
           },
           {
             "title": "Swerve",
-            "x": 1280.0,
+            "x": 512.0,
             "y": 0.0,
             "width": 256.0,
             "height": 256.0,
@@ -544,7 +460,7 @@
           },
           {
             "title": "Reset Pose",
-            "x": 768.0,
+            "x": 0.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
@@ -561,7 +477,7 @@
           },
           {
             "title": "SetX",
-            "x": 768.0,
+            "x": 0.0,
             "y": 384.0,
             "width": 256.0,
             "height": 128.0,
@@ -577,27 +493,27 @@
             }
           },
           {
-            "title": "USB Camera 1",
-            "x": 512.0,
+            "title": "Update Alliance LEDs",
+            "x": 896.0,
             "y": 256.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 256.0,
-            "type": "Camera Stream",
+            "type": "Toggle Button",
             "properties": {
-              "topic": "/CameraPublisher/USB Camera 1",
+              "topic": "/SmartDashboard/Update Alliance LEDs",
               "period": 0.06,
-              "rotation_turns": 0
+              "data_type": "boolean"
             }
           },
           {
-            "title": "USB Camera 0",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
+            "title": "photonvision_Port_1182_Output_MJPEG_Server",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 384.0,
             "height": 256.0,
             "type": "Camera Stream",
             "properties": {
-              "topic": "/CameraPublisher/USB Camera 0",
+              "topic": "/CameraPublisher/photonvision_Port_1182_Output_MJPEG_Server",
               "period": 0.06,
               "rotation_turns": 0
             }
@@ -608,38 +524,100 @@
     {
       "name": "Debugging",
       "grid_layout": {
-        "layouts": [],
-        "containers": [
+        "layouts": [
           {
-            "title": "USB Camera 0",
+            "title": "camera_0",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "driverModeRequest",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/photonvision/camera_0/driverModeRequest",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "pipelineIndexRequest",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/photonvision/camera_0/pipelineIndexRequest",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "camera_1",
             "x": 0.0,
             "y": 0.0,
-            "width": 512.0,
+            "width": 256.0,
             "height": 256.0,
-            "type": "Camera Stream",
+            "type": "List Layout",
             "properties": {
-              "topic": "/CameraPublisher/USB Camera 0",
-              "period": 0.06,
-              "rotation_turns": 0
-            }
-          },
-          {
-            "title": "Swerve",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 384.0,
-            "height": 256.0,
-            "type": "SwerveDrive",
-            "properties": {
-              "topic": "/SmartDashboard/Swerve",
-              "period": 0.06,
-              "show_robot_rotation": true,
-              "rotation_unit": "Radians"
-            }
-          },
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "driverModeRequest",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Boolean Box",
+                "properties": {
+                  "topic": "/photonvision/camera_1/driverModeRequest",
+                  "period": 0.06,
+                  "data_type": "boolean",
+                  "true_color": 4283215696,
+                  "false_color": 4294198070,
+                  "true_icon": "None",
+                  "false_icon": "None"
+                }
+              },
+              {
+                "title": "pipelineIndexRequest",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/photonvision/camera_1/pipelineIndexRequest",
+                  "period": 0.06,
+                  "data_type": "int",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
           {
             "title": "PDH",
-            "x": 896.0,
+            "x": 1152.0,
             "y": 0.0,
             "width": 384.0,
             "height": 512.0,
@@ -650,10 +628,22 @@
             }
           },
           {
+            "title": "PhotonAlerts",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 512.0,
+            "type": "Alerts",
+            "properties": {
+              "topic": "/SmartDashboard/PhotonAlerts",
+              "period": 0.06
+            }
+          },
+          {
             "title": "Robot Velocity",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 384.0,
+            "x": 1280.0,
+            "y": 512.0,
+            "width": 256.0,
             "height": 256.0,
             "type": "Radial Gauge",
             "properties": {
@@ -663,7 +653,7 @@
               "start_angle": -140.0,
               "end_angle": 140.0,
               "min_value": 0.0,
-              "max_value": 100.0,
+              "max_value": 10.0,
               "number_of_labels": 8,
               "wrap_value": false,
               "show_pointer": true,
@@ -671,32 +661,49 @@
             }
           },
           {
-            "title": "Alerts",
-            "x": 1280.0,
+            "title": "Swerve",
+            "x": 1024.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "SwerveDrive",
+            "properties": {
+              "topic": "/SmartDashboard/Swerve",
+              "period": 0.06,
+              "show_robot_rotation": true,
+              "rotation_unit": "Radians"
+            }
+          },
+          {
+            "title": "PathPlanner",
+            "x": 640.0,
             "y": 0.0,
             "width": 256.0,
             "height": 512.0,
             "type": "Alerts",
             "properties": {
-              "topic": "/SmartDashboard/Alerts",
+              "topic": "/SmartDashboard/PathPlanner",
               "period": 0.06
             }
           },
           {
-            "title": "Enabled",
+            "title": "Field",
             "x": 0.0,
             "y": 256.0,
             "width": 512.0,
-            "height": 128.0,
-            "type": "Boolean Box",
+            "height": 256.0,
+            "type": "Field",
             "properties": {
-              "topic": "/AdvantageKit/DriverStation/Enabled",
+              "topic": "/SmartDashboard/Field",
               "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
             }
           }
         ]
