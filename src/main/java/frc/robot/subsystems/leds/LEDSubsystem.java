@@ -12,12 +12,12 @@ public class LEDSubsystem extends SubsystemBase {
     private LEDPattern currentPattern;
 
     public LEDSubsystem() {
-        m_led = new AddressableLED(0); // PWM port 0
+        m_led = new AddressableLED(9); // PWM port 0
         m_ledBuffer = new AddressableLEDBuffer(60); // 60 LEDs
         m_led.setLength(m_ledBuffer.getLength());
 
         // Initialize LED strip to off using pattern
-        setPattern(LEDPattern.solid(Color.kBlack));
+        setPattern(LEDPattern.solid(Color.kGreen));
         m_led.start();
     }
 

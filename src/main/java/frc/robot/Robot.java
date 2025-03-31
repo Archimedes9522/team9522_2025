@@ -148,6 +148,7 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putData("PDH", m_pdh);
     SmartDashboard.putBoolean("Reset Pose", false);
     SmartDashboard.putBoolean("SetX", false);
+    SmartDashboard.putBoolean("Update Alliance LEDs", false);
     SmartDashboard.putNumber("Gyro angle", m_gyro.getAngle());
     SmartDashboard.putNumber("Gyro pitch", m_gyro.getPitch());
     SmartDashboard.putNumber("Gyro roll", m_gyro.getRoll());
@@ -161,6 +162,11 @@ public class Robot extends LoggedRobot {
     // Update both Field2d and Swerve widget with the same pose
     var robotPose = m_robotContainer.m_robotDrive.getPose();
     m_field.setRobotPose(robotPose);
+
+    if (SmartDashboard.getBoolean("Update Alliance LEDs", false)) {
+      updateAllianceLEDs();
+      SmartDashboard.putBoolean("Update Alliance LEDs", false); // Reset button
+    }
 
     // Handle pose reset button
     if (SmartDashboard.getBoolean("Reset Pose", false)) {
