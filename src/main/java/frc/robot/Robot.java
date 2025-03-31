@@ -7,6 +7,7 @@ import com.studica.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.IOException;
@@ -27,11 +29,13 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import frc.robot.subsystems.leds.LEDSubsystem;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
   private RobotContainer m_robotContainer;
+  private LEDSubsystem m_ledSubsystem;
   private final Field2d m_field = new Field2d();
   private String autoName, newAutoName;
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
@@ -79,10 +83,24 @@ public class Robot extends LoggedRobot {
 
     Logger.start();
 
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_ledSubsystem = new LEDSubsystem();
     setupSmartDashboard();
+    updateAllianceLEDs();
+  }
+
+  private void updateAllianceLEDs() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      if (alliance.get() == DriverStation.Alliance.Red) {
+        m_ledSubsystem.setColor(Color.kRed);
+      } else {
+        m_ledSubsystem.setColor(Color.kBlue);
+      }
+    } else {
+      // No alliance selected, default to white
+      m_ledSubsystem.setColor(Color.kWhite);
+    }
   }
 
   @Override
