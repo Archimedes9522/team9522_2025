@@ -30,6 +30,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.util.BuildConstants;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
