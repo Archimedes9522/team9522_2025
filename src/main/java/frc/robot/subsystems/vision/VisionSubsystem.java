@@ -267,6 +267,13 @@ public class VisionSubsystem extends SubsystemBase {
         poseObservations = poseObservationsList.toArray(new PoseObservation[0]);
         tagIds = tagIdSet.stream().mapToInt(Integer::intValue).toArray();
 
+        // Log the tagIds and Closest tag
+        System.out.println("Tag IDs: " + tagIds.length);
+        for (int tagId : tagIds) {
+            System.out.println("Tag ID: " + tagId);
+        }
+        System.out.println("Closest Tag: " + closestTag);
+
         // Update closest tag
         updateClosestTag();
     }
