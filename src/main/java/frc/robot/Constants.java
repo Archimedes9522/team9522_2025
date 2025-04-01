@@ -69,7 +69,7 @@ public final class Constants {
       public static final double kLevel1 = 0;
       public static final double kLevel2 = 2;
       public static final double kLevel3 = 2;
-      public static final double kLevel4 = 7.5;
+      public static final double kLevel4 = 6.75;
     }
 
     public static final class IntakeSetpoints {
