@@ -99,8 +99,7 @@ public class Robot extends LoggedRobot {
         m_ledSubsystem.setColor(Color.kBlue);
       }
     } else {
-      // No alliance selected, default to white
-      m_ledSubsystem.setColor(Color.kWhite);
+      m_ledSubsystem.setColor(Color.kGreen);
     }
   }
 
