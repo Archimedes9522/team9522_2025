@@ -66,7 +66,6 @@ public class DriverAssistCommands {
                   vision.getClosestTagPose(drive.getPose()));
               System.out.println("Raw Closest Tag (3D): " +
                   vision.getClosestTag());
-
               // Use camera 1 for reef tag alignment (back camera)
               Pose2d targetPose = drive.calculateTagOffset(
                   vision.getClosestTagPoseForCamera(1, drive.getPose()),
