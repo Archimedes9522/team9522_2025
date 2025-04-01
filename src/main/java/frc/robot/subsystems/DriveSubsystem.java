@@ -15,6 +15,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -136,7 +137,7 @@ public class DriveSubsystem extends SubsystemBase {
               "Back Right Velocity", () -> m_rearRight.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Robot Angle", () -> Rotation2d.fromDegrees(-m_gyro.getAngle()).getRadians(), null);
+              "Robot Angle", () -> -m_gyro.getAngle(), null);
         });
 
     // Usage reporting for MAXSwerve template
@@ -147,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        Rotation2d.fromDegrees(m_gyro.getAngle()),
+        m_gyro.getRotation2d(),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
