@@ -56,9 +56,17 @@ public class DriverAssistCommands {
    */
   public static Command alignToReefTag(
       DriveSubsystem drive, VisionSubsystem vision, boolean alignRight, BooleanSupplier cancelSupplier) {
+
     return Commands.sequence(
         Commands.runOnce(
             () -> {
+              System.out.println("Camera 1 Closest Tag Pose: " +
+                  vision.getClosestTagPoseForCamera(1, drive.getPose()));
+              System.out.println("Overall Closest Tag Pose: " +
+                  vision.getClosestTagPose(drive.getPose()));
+              System.out.println("Raw Closest Tag (3D): " +
+                  vision.getClosestTag());
+
               // Use camera 1 for reef tag alignment (back camera)
               Pose2d targetPose = drive.calculateTagOffset(
                   vision.getClosestTagPoseForCamera(1, drive.getPose()),
@@ -67,6 +75,7 @@ public class DriverAssistCommands {
                   alignRight,
                   true);
               if (targetPose != null) {
+                System.out.println("Target Pose: " + targetPose.toString());
                 AutoBuilder.pathfindToPose(targetPose, REEF_ALIGNMENT_CONSTRAINTS)
                     .until(cancelSupplier)
                     .schedule();
