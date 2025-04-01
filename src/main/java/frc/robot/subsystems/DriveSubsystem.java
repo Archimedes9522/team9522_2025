@@ -228,7 +228,7 @@ public class DriveSubsystem extends SubsystemBase {
     Rotation2d robotFacing = new Rotation2d(robotFacingRadians);
 
     // Calculate the additional offset needed for the robot's center
-    double robotHalfLength = Units.inchesToMeters(18.0 + distantOffset);
+    double robotHalfLength = Units.inchesToMeters(16 + distantOffset);
 
     // Key change: Direction of offset depends on which bumper we're aligning
     // When facing the tag: front bumper aligns, so subtract offset in the facing

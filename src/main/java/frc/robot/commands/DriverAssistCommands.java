@@ -59,9 +59,9 @@ public class DriverAssistCommands {
     return Commands.sequence(
         Commands.runOnce(
             () -> {
-              // Use camera 0 for reef tag alignment (front camera)
+              // Use camera 1 for reef tag alignment (back camera)
               Pose2d targetPose = drive.calculateTagOffset(
-                  vision.getClosestTagPoseForCamera(0, drive.getPose()),
+                  vision.getClosestTagPoseForCamera(1, drive.getPose()),
                   REEF_DISTANCE_OFFSET,
                   ONE_INCH * 3,
                   alignRight,
@@ -90,9 +90,9 @@ public class DriverAssistCommands {
     return Commands.sequence(
         Commands.runOnce(
             () -> {
-              // Use camera 1 for coral station alignment (rear camera)
+              // Use camera 0 for coral station alignment (front camera)
               Pose2d targetPose = drive.calculateTagOffset(
-                  vision.getClosestTagPoseForCamera(1, drive.getPose()),
+                  vision.getClosestTagPoseForCamera(0, drive.getPose()),
                   0,
                   CORAL_DISTANCE_OFFSET,
                   false,
