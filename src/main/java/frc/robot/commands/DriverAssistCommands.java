@@ -96,7 +96,7 @@ public class DriverAssistCommands {
                   0,
                   CORAL_DISTANCE_OFFSET,
                   false,
-                  false);
+                  true);
 
               if (targetPose != null) {
                 AutoBuilder.pathfindToPose(targetPose, CORAL_ALIGNMENT_CONSTRAINTS)

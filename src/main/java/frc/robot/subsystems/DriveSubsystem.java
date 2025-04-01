@@ -117,22 +117,22 @@ public class DriveSubsystem extends SubsystemBase {
           builder.setSmartDashboardType("SwerveDrive");
 
           builder.addDoubleProperty(
-              "Front Left Angle", () -> m_frontLeft.getPosition().angle.getRadians(), null);
+              "Front Left Angle", () -> m_frontLeft.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Front Left Velocity", () -> m_frontLeft.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Front Right Angle", () -> m_frontRight.getPosition().angle.getRadians(), null);
+              "Front Right Angle", () -> m_frontRight.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Front Right Velocity", () -> m_frontRight.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Back Left Angle", () -> m_rearLeft.getPosition().angle.getRadians(), null);
+              "Back Left Angle", () -> m_rearLeft.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Back Left Velocity", () -> m_rearLeft.getState().speedMetersPerSecond, null);
 
           builder.addDoubleProperty(
-              "Back Right Angle", () -> m_rearRight.getPosition().angle.getRadians(), null);
+              "Back Right Angle", () -> m_rearRight.getPosition().angle.getDegrees(), null);
           builder.addDoubleProperty(
               "Back Right Velocity", () -> m_rearRight.getState().speedMetersPerSecond, null);
 
@@ -328,7 +328,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public Command zeroHeadingCommand() {
-    return this.runOnce(() -> m_gyro.reset());
+    return this.runOnce(() -> {
+      m_gyro.reset();
+      resetPose();
+    });
   }
 
   public void resetPose() {
