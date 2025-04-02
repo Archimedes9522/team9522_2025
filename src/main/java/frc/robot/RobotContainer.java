@@ -21,16 +21,13 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
 import frc.robot.subsystems.vision.*;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.commands.ToggleArmPositionCommand;
 import frc.robot.commands.DriverAssistCommands;
-import frc.robot.subsystems.ClimberSubsystem;
 import java.util.function.BooleanSupplier;
 
 public class RobotContainer {
         public final DriveSubsystem m_robotDrive = new DriveSubsystem();
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
-        private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
         private final Vision visionSubsystem = new Vision(
                         m_robotDrive::addVisionMeasurement,
                         new VisionIOPhotonVision(camera0Name, robotToCamera0),
@@ -135,7 +132,8 @@ public class RobotContainer {
                 m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
 
                 // POV Down -> Move climber arm to inside/outside position
-                m_driverController.povDown().onTrue(new ToggleArmPositionCommand(climberSubsystem));
+                // m_driverController.povDown().onTrue(new
+                // ToggleArmPositionCommand(climberSubsystem));
 
                 // Function to check if driver is using joysticks (for cancellation)
                 final double JOYSTICK_DEADBAND = 0.15;
@@ -166,8 +164,7 @@ public class RobotContainer {
         public double getSimulationTotalCurrentDraw() {
                 // for each subsystem with simulation
                 return m_coralSubSystem.getSimulationCurrentDraw()
-                                + m_algaeSubsystem.getSimulationCurrentDraw()
-                                + climberSubsystem.getSimulationCurrentDraw();
+                                + m_algaeSubsystem.getSimulationCurrentDraw();
         }
 
         public Command getAutonomousCommand() {

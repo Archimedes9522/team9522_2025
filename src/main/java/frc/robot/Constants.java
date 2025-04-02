@@ -96,18 +96,6 @@ public final class Constants {
     }
   }
 
-  public static final class ClimberSubsystemConstants {
-    public static final int kClimberMotorCanId = 14;
-    public static final double kClimberGearReduction = 64.0; // 64:1 reduction
-    public static final double kClimberSpeed = 1.0; // Speed for climbing
-    public static final double kClimberDownSpeed = -1.0; // Speed for pulling the cage down
-
-    public static final class ArmSetpoints {
-      public static final double kInside = 0.0;
-      public static final double kOutside = 1.0;
-    }
-  }
-
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
