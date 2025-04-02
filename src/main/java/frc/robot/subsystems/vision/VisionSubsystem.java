@@ -16,6 +16,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,10 @@ public class VisionSubsystem extends SubsystemBase {
     private PoseObservation[] poseObservations = new PoseObservation[0];
     private Pose3d closestTag = new Pose3d();
     private int[] tagIds = new int[0];
+
+    private static final List<Integer> REEF_TAGS = Arrays.asList(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
+    // List of allowed tag IDs
+    private static final List<Integer> CORAL_STATION_TAGS = Arrays.asList(1, 2, 12, 13); // List of allowed tag IDs
 
     /**
      * Creates a new VisionSubsystem with default cameras from VisionConstants.

@@ -26,93 +26,95 @@ import java.util.function.BooleanSupplier;
 /** Commands for driver assistance features like auto-alignment */
 public class DriverAssistCommands {
 
-  // Standard offsets for alignment
-  private static final double REEF_DISTANCE_OFFSET = Units.inchesToMeters(6.5);
-  private static final double CORAL_DISTANCE_OFFSET = Units.inchesToMeters(4);
-  private static final double ONE_INCH = Units.inchesToMeters(1);
+    // Standard offsets for alignment
+    private static final double REEF_DISTANCE_OFFSET = Units.inchesToMeters(6.5);
+    private static final double CORAL_DISTANCE_OFFSET = Units.inchesToMeters(4);
+    private static final double ONE_INCH = Units.inchesToMeters(1);
 
-  // Path constraints for different alignment scenarios
-  private static final PathConstraints REEF_ALIGNMENT_CONSTRAINTS = new PathConstraints(
-      3.0, // Max velocity in m/s
-      4.0, // Max acceleration in m/s^2
-      3.0, // Max angular velocity in rad/s
-      4.0); // Max angular acceleration in rad/s^2
+    // Path constraints for different alignment scenarios
+    private static final PathConstraints REEF_ALIGNMENT_CONSTRAINTS = new PathConstraints(
+            3.0, // Max velocity in m/s
+            4.0, // Max acceleration in m/s^2
+            3.0, // Max angular velocity in rad/s
+            4.0); // Max angular acceleration in rad/s^2
 
-  private static final PathConstraints CORAL_ALIGNMENT_CONSTRAINTS = new PathConstraints(
-      3.0, // Max velocity in m/s
-      4.0, // Max acceleration in m/s^2
-      3.0, // Max angular velocity in rad/s
-      4.0); // Max angular acceleration in rad/s^2
+    private static final PathConstraints CORAL_ALIGNMENT_CONSTRAINTS = new PathConstraints(
+            3.0, // Max velocity in m/s
+            4.0, // Max acceleration in m/s^2
+            3.0, // Max angular velocity in rad/s
+            4.0); // Max angular acceleration in rad/s^2
 
-  /**
-   * Creates a command to align the robot to a reef tag position.
-   *
-   * @param drive          The drive subsystem
-   * @param vision         The vision subsystem
-   * @param alignRight     True to align to the right of the tag, false for left
-   * @param cancelSupplier A supplier that returns true when the command should be
-   *                       cancelled
-   * @return The alignment command
-   */
-  public static Command alignToReefTag(
-      DriveSubsystem drive, VisionSubsystem vision, boolean alignRight, BooleanSupplier cancelSupplier) {
+    /**
+     * Creates a command to align the robot to a reef tag position.
+     *
+     * @param drive          The drive subsystem
+     * @param vision         The vision subsystem
+     * @param alignRight     True to align to the right of the tag, false for left
+     * @param cancelSupplier A supplier that returns true when the command should be
+     *                       cancelled
+     * @return The alignment command
+     */
+    public static Command alignToReefTag(
+            DriveSubsystem drive, VisionSubsystem vision, boolean alignRight, BooleanSupplier cancelSupplier) {
 
-    return Commands.sequence(
-        Commands.runOnce(
-            () -> {
-              System.out.println("Camera 1 Closest Tag Pose: " +
-                  vision.getClosestTagPoseForCamera(1, drive.getPose()));
-              System.out.println("Overall Closest Tag Pose: " +
-                  vision.getClosestTagPose(drive.getPose()));
-              System.out.println("Raw Closest Tag (3D): " +
-                  vision.getClosestTag());
-              // Use camera 1 for reef tag alignment (back camera)
-              Pose2d targetPose = drive.calculateTagOffset(
-                  vision.getClosestTagPoseForCamera(1, drive.getPose()),
-                  REEF_DISTANCE_OFFSET,
-                  ONE_INCH * 3,
-                  alignRight,
-                  true);
-              if (targetPose != null) {
-                System.out.println("Target Pose: " + targetPose.toString());
-                AutoBuilder.pathfindToPose(targetPose, REEF_ALIGNMENT_CONSTRAINTS)
-                    .until(cancelSupplier)
-                    .schedule();
-              }
-            }),
-        Commands.waitSeconds(0.1))
-        .withName("Auto Align Reef " + (alignRight ? "Right" : "Left"));
-  }
+        return Commands.sequence(
+                Commands.runOnce(
+                        () -> {
+                            System.out.println("Camera 1 Closest Tag Pose: " +
+                                    vision.getClosestTagPoseForCamera(1, drive.getPose()));
+                            System.out.println("Overall Closest Tag Pose: " +
+                                    vision.getClosestTagPose(drive.getPose()));
+                            System.out.println("Raw Closest Tag (3D): " +
+                                    vision.getClosestTag());
+                            // Use camera 1 for reef tag alignment (back camera)
+                            Pose2d targetPose = drive.calculateTagOffset(
+                                    // vision.getClosestTagPoseForCamera(1, drive.getPose()),
+                                    vision.getClosestTagPose(drive.getPose()),
+                                    REEF_DISTANCE_OFFSET,
+                                    ONE_INCH * 3,
+                                    alignRight,
+                                    true);
+                            if (targetPose != null) {
+                                System.out.println("Target Pose: " + targetPose.toString());
+                                AutoBuilder.pathfindToPose(targetPose, REEF_ALIGNMENT_CONSTRAINTS)
+                                        .until(cancelSupplier)
+                                        .schedule();
+                            }
+                        }),
+                Commands.waitSeconds(0.1))
+                .withName("Auto Align Reef " + (alignRight ? "Right" : "Left"));
+    }
 
-  /**
-   * Creates a command to align the robot to a coral station tag.
-   *
-   * @param drive          The drive subsystem
-   * @param vision         The vision subsystem
-   * @param cancelSupplier A supplier that returns true when the command should be
-   *                       cancelled
-   * @return The alignment command
-   */
-  public static Command alignToCoralTag(
-      DriveSubsystem drive, VisionSubsystem vision, BooleanSupplier cancelSupplier) {
-    return Commands.sequence(
-        Commands.runOnce(
-            () -> {
-              // Use camera 0 for coral station alignment (front camera)
-              Pose2d targetPose = drive.calculateTagOffset(
-                  vision.getClosestTagPoseForCamera(0, drive.getPose()),
-                  0,
-                  CORAL_DISTANCE_OFFSET,
-                  false,
-                  true);
+    /**
+     * Creates a command to align the robot to a coral station tag.
+     *
+     * @param drive          The drive subsystem
+     * @param vision         The vision subsystem
+     * @param cancelSupplier A supplier that returns true when the command should be
+     *                       cancelled
+     * @return The alignment command
+     */
+    public static Command alignToCoralTag(
+            DriveSubsystem drive, VisionSubsystem vision, BooleanSupplier cancelSupplier) {
+        return Commands.sequence(
+                Commands.runOnce(
+                        () -> {
+                            // Use camera 0 for coral station alignment (front camera)
+                            Pose2d targetPose = drive.calculateTagOffset(
+                                    // vision.getClosestTagPoseForCamera(0, drive.getPose()),
+                                    vision.getClosestTagPose(drive.getPose()),
+                                    0,
+                                    CORAL_DISTANCE_OFFSET,
+                                    false,
+                                    true);
 
-              if (targetPose != null) {
-                AutoBuilder.pathfindToPose(targetPose, CORAL_ALIGNMENT_CONSTRAINTS)
-                    .until(cancelSupplier)
-                    .schedule();
-              }
-            }),
-        Commands.waitSeconds(0.1))
-        .withName("Auto Align Coral Station");
-  }
+                            if (targetPose != null) {
+                                AutoBuilder.pathfindToPose(targetPose, CORAL_ALIGNMENT_CONSTRAINTS)
+                                        .until(cancelSupplier)
+                                        .schedule();
+                            }
+                        }),
+                Commands.waitSeconds(0.1))
+                .withName("Auto Align Coral Station");
+    }
 }
