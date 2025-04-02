@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -18,8 +19,8 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.CoralSubsystem.Setpoint;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.commands.ToggleArmPositionCommand;
 import frc.robot.commands.DriverAssistCommands;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -30,7 +31,11 @@ public class RobotContainer {
         private final CoralSubsystem m_coralSubSystem = new CoralSubsystem();
         private final AlgaeSubsystem m_algaeSubsystem = new AlgaeSubsystem();
         private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
-        private final VisionSubsystem visionSubsystem = new VisionSubsystem(m_robotDrive::addVisionMeasurement);
+        private final Vision visionSubsystem = new Vision(
+                        m_robotDrive::addVisionMeasurement,
+                        new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                        new VisionIOPhotonVision(camera1Name,
+                                        robotToCamera1));
 
         private boolean isLevel1 = false;
         private final SendableChooser<Command> autoChooser;

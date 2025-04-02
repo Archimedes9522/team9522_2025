@@ -20,7 +20,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.Vision;
 import java.util.function.BooleanSupplier;
 
 /** Commands for driver assistance features like auto-alignment */
@@ -55,27 +55,17 @@ public class DriverAssistCommands {
      * @return The alignment command
      */
     public static Command alignToReefTag(
-            DriveSubsystem drive, VisionSubsystem vision, boolean alignRight, BooleanSupplier cancelSupplier) {
-
+            DriveSubsystem drive, Vision vision, boolean alignRight, BooleanSupplier cancelSupplier) {
         return Commands.sequence(
                 Commands.runOnce(
                         () -> {
-                            System.out.println("Camera 1 Closest Tag Pose: " +
-                                    vision.getClosestTagPoseForCamera(1, drive.getPose()));
-                            System.out.println("Overall Closest Tag Pose: " +
-                                    vision.getClosestTagPose(drive.getPose()));
-                            System.out.println("Raw Closest Tag (3D): " +
-                                    vision.getClosestTag());
-                            // Use camera 1 for reef tag alignment (back camera)
                             Pose2d targetPose = drive.calculateTagOffset(
-                                    // vision.getClosestTagPoseForCamera(1, drive.getPose()),
-                                    vision.getClosestTagPose(drive.getPose()),
+                                    vision.getClosestTagPose(1, drive.getPose()),
                                     REEF_DISTANCE_OFFSET,
                                     ONE_INCH * 3,
                                     alignRight,
                                     true);
                             if (targetPose != null) {
-                                System.out.println("Target Pose: " + targetPose.toString());
                                 AutoBuilder.pathfindToPose(targetPose, REEF_ALIGNMENT_CONSTRAINTS)
                                         .until(cancelSupplier)
                                         .schedule();
@@ -95,18 +85,16 @@ public class DriverAssistCommands {
      * @return The alignment command
      */
     public static Command alignToCoralTag(
-            DriveSubsystem drive, VisionSubsystem vision, BooleanSupplier cancelSupplier) {
+            DriveSubsystem drive, Vision vision, BooleanSupplier cancelSupplier) {
         return Commands.sequence(
                 Commands.runOnce(
                         () -> {
-                            // Use camera 0 for coral station alignment (front camera)
                             Pose2d targetPose = drive.calculateTagOffset(
-                                    // vision.getClosestTagPoseForCamera(0, drive.getPose()),
-                                    vision.getClosestTagPose(drive.getPose()),
+                                    vision.getClosestTagPose(0, drive.getPose()),
                                     0,
                                     CORAL_DISTANCE_OFFSET,
                                     false,
-                                    true);
+                                    false);
 
                             if (targetPose != null) {
                                 AutoBuilder.pathfindToPose(targetPose, CORAL_ALIGNMENT_CONSTRAINTS)
