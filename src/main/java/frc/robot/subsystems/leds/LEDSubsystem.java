@@ -12,12 +12,9 @@ public class LEDSubsystem extends SubsystemBase {
     private LEDPattern currentPattern;
 
     public LEDSubsystem() {
-        m_led = new AddressableLED(9); // PWM port 0
-        m_ledBuffer = new AddressableLEDBuffer(60); // 60 LEDs
+        m_led = new AddressableLED(8); // PWM port 0
+        m_ledBuffer = new AddressableLEDBuffer(26); // 60 LEDs
         m_led.setLength(m_ledBuffer.getLength());
-
-        // Initialize LED strip to off using pattern
-        setPattern(LEDPattern.solid(Color.kGreen));
         m_led.start();
     }
 
@@ -39,14 +36,5 @@ public class LEDSubsystem extends SubsystemBase {
      */
     public void setColor(Color color) {
         setPattern(LEDPattern.solid(color));
-    }
-
-    @Override
-    public void periodic() {
-        // Keep LED strip updated with current pattern
-        if (currentPattern != null) {
-            currentPattern.applyTo(m_ledBuffer);
-            m_led.setData(m_ledBuffer);
-        }
     }
 }
