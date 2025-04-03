@@ -246,7 +246,7 @@ public class CoralSubsystem extends SubsystemBase {
   public Command runIntakeHoldCommand() {
     return Commands.sequence(
         Commands.runOnce(() -> this.setIntakePower(IntakeSetpoints.kForward)),
-        Commands.waitSeconds(1.0),
+        Commands.waitSeconds(2),
         Commands.runOnce(() -> this.setIntakePower(0.0))).withName("RunIntakeHold");
   }
 
@@ -273,7 +273,7 @@ public class CoralSubsystem extends SubsystemBase {
   public Command reverseIntakeHoldCommand() {
     return Commands.sequence(
         Commands.runOnce(() -> this.setIntakePower(IntakeSetpoints.kReverse)),
-        Commands.waitSeconds(1.0),
+        Commands.waitSeconds(2),
         Commands.runOnce(() -> this.setIntakePower(0.0))).withName("ReverseIntakeHold");
   }
 

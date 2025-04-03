@@ -56,6 +56,32 @@ public class RobotContainer {
                 // Drive Subsystem Commands
                 NamedCommands.registerCommand("setX", m_robotDrive.setXCommand());
                 NamedCommands.registerCommand("zeroHeading", m_robotDrive.zeroHeadingCommand());
+
+                // Vision Subsystem Commands
+                NamedCommands.registerCommand("alignToCoralTag",
+                                DriverAssistCommands.alignToCoralTag(m_robotDrive, visionSubsystem,
+                                                () -> Math.abs(m_driverController
+                                                                .getLeftX()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getLeftY()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getRightX()) > OIConstants.kDriveDeadband));
+                NamedCommands.registerCommand("alignToReefTagLeft",
+                                DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, false,
+                                                () -> Math.abs(m_driverController
+                                                                .getLeftX()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getLeftY()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getRightX()) > OIConstants.kDriveDeadband));
+                NamedCommands.registerCommand("alignToReefTagRight",
+                                DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, true,
+                                                () -> Math.abs(m_driverController
+                                                                .getLeftX()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getLeftY()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getRightX()) > OIConstants.kDriveDeadband));
                 configureButtonBindings();
                 autoChooser = AutoBuilder.buildAutoChooser("None");
                 SmartDashboard.putData("Auto Chooser", autoChooser);
