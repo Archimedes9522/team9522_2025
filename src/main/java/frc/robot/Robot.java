@@ -18,6 +18,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
+import edu.wpi.first.wpilibj.LEDPattern;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +33,12 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.util.BuildConstants;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
   private final AHRS m_gyro = new AHRS(AHRS.NavXComType.kMXP_SPI);
   private RobotContainer m_robotContainer;
-  private LEDSubsystem m_ledSubsystem;
   private final Field2d m_field = new Field2d();
   private String autoName, newAutoName;
   private final PowerDistribution m_pdh = new PowerDistribution(1, ModuleType.kRev);
@@ -85,22 +87,18 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     m_robotContainer = new RobotContainer();
-    m_ledSubsystem = new LEDSubsystem();
     setupSmartDashboard();
-    updateAllianceLEDs();
-  }
-
-  private void updateAllianceLEDs() {
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent()) {
-      if (alliance.get() == DriverStation.Alliance.Red) {
-        m_ledSubsystem.setColor(Color.kRed);
-      } else {
-        m_ledSubsystem.setColor(Color.kBlue);
-      }
-    } else {
-      m_ledSubsystem.setColor(Color.kGreen);
-    }
+    LEDPattern red = LEDPattern.solid(Color.kRed);
+    LEDPattern blue = LEDPattern.solid(Color.kBlue);
+    AddressableLED m_led = new AddressableLED(9);
+    AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(50);
+    AddressableLEDBufferView m_top = m_ledBuffer.createView(22, 29);
+    m_led.setLength(m_ledBuffer.getLength());
+    m_led.setData(m_ledBuffer);
+    m_led.start();
+    red.applyTo(m_ledBuffer);
+    blue.applyTo(m_top);
+    m_led.setData(m_ledBuffer);
   }
 
   @Override
@@ -162,11 +160,6 @@ public class Robot extends LoggedRobot {
     // Update both Field2d and Swerve widget with the same pose
     var robotPose = m_robotContainer.m_robotDrive.getPose();
     m_field.setRobotPose(robotPose);
-
-    if (SmartDashboard.getBoolean("Update Alliance LEDs", false)) {
-      updateAllianceLEDs();
-      SmartDashboard.putBoolean("Update Alliance LEDs", false); // Reset button
-    }
 
     // Handle pose reset button
     if (SmartDashboard.getBoolean("Reset Pose", false)) {

@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StraightTest"
+            "pathName": "StraightUpperLow"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "StraightUpper",
   "choreoAuto": false
 }

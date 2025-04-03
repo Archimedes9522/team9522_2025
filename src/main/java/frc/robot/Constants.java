@@ -61,7 +61,7 @@ public final class Constants {
       public static final int kLevel1 = 0;
       public static final int kLevel2 = 0;
       public static final int kLevel3 = 100;
-      public static final int kLevel4 = 189;
+      public static final int kLevel4 = 190;
     }
 
     public static final class ArmSetpoints {
@@ -69,7 +69,7 @@ public final class Constants {
       public static final double kLevel1 = 0;
       public static final double kLevel2 = 2;
       public static final double kLevel3 = 2;
-      public static final double kLevel4 = 6.75;
+      public static final double kLevel4 = 6.5;
     }
 
     public static final class IntakeSetpoints {

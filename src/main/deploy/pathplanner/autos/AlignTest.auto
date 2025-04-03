@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "alignToReefTagRight"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "alignToReefTagRight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "setLevel2"
+                }
+              }
+            ]
           }
         },
         {

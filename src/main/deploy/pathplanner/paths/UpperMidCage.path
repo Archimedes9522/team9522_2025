@@ -3,47 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.223565573770491,
-        "y": 5.0499487704918025
+        "x": 8.0,
+        "y": 6.175
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.271124442941918,
-        "y": 5.0499487704918025
+        "x": 7.0,
+        "y": 6.175
       },
       "isLocked": false,
-      "linkedName": "LowerStart"
+      "linkedName": "UpperMidCage"
     },
     {
       "anchor": {
-        "x": 3.812090163934426,
-        "y": 5.493493852459016
+        "x": 5.262602459016393,
+        "y": 5.0379610655737705
       },
       "prevControl": {
-        "x": 5.238627049180328,
-        "y": 6.896055327868853
+        "x": 6.262602459016393,
+        "y": 5.0379610655737705
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterReef"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "setLevel2",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "setLevel2"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -54,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.35775354279133
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": null,

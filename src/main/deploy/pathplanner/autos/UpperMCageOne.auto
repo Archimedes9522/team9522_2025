@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LowerCage"
+                  "pathName": "UpperMidCage"
                 }
               },
               {
@@ -31,12 +31,6 @@
                 "type": "named",
                 "data": {
                   "name": "runIntake"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
                 }
               }
             ]
@@ -64,7 +58,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
