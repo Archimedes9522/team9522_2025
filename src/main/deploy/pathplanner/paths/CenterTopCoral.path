@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.077766393442623,
-        "y": 4.150870901639344
+        "x": 5.262602459016393,
+        "y": 5.0379610655737705
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.492315573770492,
-        "y": 6.80015368852459
+        "x": 6.005840163934426,
+        "y": 6.9679815573770485
       },
       "isLocked": false,
       "linkedName": "CenterReef"
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }
