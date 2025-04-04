@@ -157,10 +157,6 @@ public class RobotContainer {
                 // Start Button -> Zero swerve heading
                 m_driverController.start().onTrue(m_robotDrive.zeroHeadingCommand());
 
-                // POV Down -> Move climber arm to inside/outside position
-                // m_driverController.povDown().onTrue(new
-                // ToggleArmPositionCommand(climberSubsystem));
-
                 // Function to check if driver is using joysticks (for cancellation)
                 final double JOYSTICK_DEADBAND = 0.15;
                 BooleanSupplier driverInputDetected = () -> Math.abs(m_driverController.getLeftX()) > JOYSTICK_DEADBAND

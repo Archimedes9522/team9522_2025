@@ -7,7 +7,6 @@ import com.studica.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Threads;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
@@ -105,8 +104,8 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     Threads.setCurrentThreadPriority(true, 99);
     CommandScheduler.getInstance().run();
-    updateSmartDashboard();
     Threads.setCurrentThreadPriority(false, 10);
+    updateSmartDashboard();
   }
 
   @Override

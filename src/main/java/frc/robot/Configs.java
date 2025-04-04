@@ -134,26 +134,4 @@ public final class Configs {
       armConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(40);
     }
   }
-
-  public static final class ClimberSubsystem {
-    public static final SparkMaxConfig climberConfig = new SparkMaxConfig();
-
-    static {
-      // Configure basic settings of the climber motor
-      climberConfig.idleMode(IdleMode.kBrake)
-          .smartCurrentLimit(40)
-          .voltageCompensation(12);
-
-      // Configure the closed loop controller for position control
-      climberConfig.closedLoop
-          .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-          .p(0.1)
-          .i(0)
-          .d(0)
-          .outputRange(-1, 1).maxMotion
-          .maxVelocity(5000)
-          .maxAcceleration(10000)
-          .allowedClosedLoopError(0.25);
-    }
-  }
 }
