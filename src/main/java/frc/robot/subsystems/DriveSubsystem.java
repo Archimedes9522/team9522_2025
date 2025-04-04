@@ -268,6 +268,17 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
+    // If field-relative and on red alliance, invert forward/backward for proper
+    // field orientation
+    if (fieldRelative) {
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red) {
+        // Invert x-axis for red alliance to maintain consistent field-relative controls
+        xSpeedDelivered = -xSpeedDelivered;
+        ySpeedDelivered = -ySpeedDelivered;
+      }
+    }
+
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(

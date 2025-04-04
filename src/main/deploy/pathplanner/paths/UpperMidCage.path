@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.0,
-        "y": 6.175
+        "x": 6.946684191954692,
+        "y": 6.174897853297955
       },
       "isLocked": false,
       "linkedName": "UpperMidCage"
@@ -20,12 +20,12 @@
         "y": 5.0379610655737705
       },
       "prevControl": {
-        "x": 6.262602459016393,
-        "y": 5.0379610655737705
+        "x": 6.062770250321946,
+        "y": 5.639168907040226
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterReef"
+      "linkedName": "UpperRightReef"
     }
   ],
   "rotationTargets": [],
