@@ -171,7 +171,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.1;
     public static final double kTriggerButtonThreshold = 0.2;
-    public static final double kDriveSpeedFactor = 0.5; // Add this line (0.5 = half sensitivity)
+    public static final double kDriveSpeedFactor = 0.65; // Add this line (0.5 = half sensitivity)
   }
 
   public static final class AutoConstants {

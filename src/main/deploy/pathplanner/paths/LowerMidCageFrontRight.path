@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 8.0,
-        "y": 6.175
+        "y": 1.915
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.946684191954692,
-        "y": 6.174897853297955
+        "x": 6.981371322840487,
+        "y": 1.8833410106269375
       },
       "isLocked": false,
-      "linkedName": "UpperMidCage"
+      "linkedName": "LowerMidCage"
     },
     {
       "anchor": {
         "x": 5.262602459016393,
-        "y": 5.013985655737705
+        "y": 3.036014344262295
       },
       "prevControl": {
-        "x": 6.062770250321946,
-        "y": 5.61519349720416
+        "x": 5.989752433963487,
+        "y": 2.32626759728409
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "UpperRightReef"
+      "linkedName": "LowerRightReef"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "UpperReefPaths",
+  "folder": "LowerReefPaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

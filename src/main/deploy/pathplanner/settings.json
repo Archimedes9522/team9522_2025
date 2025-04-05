@@ -3,10 +3,13 @@
   "robotLength": 0.7747,
   "holonomicMode": true,
   "pathFolders": [
+    "UpperReefPaths",
     "StraightUpper",
-    "StraightLower"
+    "StraightLower",
+    "LowerReefPaths"
   ],
   "autoFolders": [
+    "L2 Autos",
     "StraightLower",
     "StraightUpper"
   ],

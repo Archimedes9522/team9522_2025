@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LowerMidCage"
+                  "pathName": "LowerMidCageFrontRight"
                 }
               },
               {
@@ -24,22 +24,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "runIntake"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
-                }
-              }
-            ]
+            "name": "runIntake"
           }
         },
         {
@@ -49,7 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LowerRightCoral"
+                  "pathName": "LowerFrontRightCoral"
                 }
               },
               {
@@ -60,11 +47,67 @@
               }
             ]
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "reverseIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LowerCoralReefFrontLeft"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "setLevel2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "runIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LowerFrontLeftCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "setFeederStation"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "reverseIntake"
+          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "L2 Autos",
   "choreoAuto": false
 }

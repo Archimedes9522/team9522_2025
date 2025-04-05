@@ -24,6 +24,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import frc.robot.subsystems.vision.VisionIO.VisionIOInputs;
@@ -42,6 +43,8 @@ public class Vision extends SubsystemBase {
                                                                                                             // allowed
                                                                                                             // tag IDs
   private static final List<Integer> CORAL_STATION_TAGS = Arrays.asList(1, 2, 12, 13); // List of allowed tag IDs
+  private static final List<Integer> BLUE_PROCESSOR_TAG = Arrays.asList(16);
+  private static final List<Integer> RED_PROCESSOR_TAG = Arrays.asList(3);
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -81,9 +84,23 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.ty();
   }
 
-  // public Pose2d getClosestTagPose(int cameraIndex) {
-  // return inputs[cameraIndex].closestTag.toPose2d();
-  // }
+  public Pose2d getProcessorTagPose(int cameraIndex, Pose2d currentPose) {
+    var alliance = DriverStation.getAlliance();
+    List<Integer> processorTags = alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red
+        ? RED_PROCESSOR_TAG
+        : BLUE_PROCESSOR_TAG;
+
+    if (!inputs[cameraIndex].isLocked) {
+      inputs[cameraIndex].closestTag = getClosestTagPose(inputs[cameraIndex], processorTags, 10.0);
+    }
+
+    // Check if this is essentially the origin
+    Pose2d tagPose = inputs[cameraIndex].closestTag.toPose2d();
+    if (Math.abs(tagPose.getX()) < 0.001 && Math.abs(tagPose.getY()) < 0.001) {
+      return currentPose;
+    }
+    return tagPose;
+  }
 
   public Pose2d getClosestTagPose(int cameraIndex, Pose2d currentPose) {
     // Check if the closest tag is essentially at origin (0,0,0), indicating no

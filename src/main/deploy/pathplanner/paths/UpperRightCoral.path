@@ -4,23 +4,23 @@
     {
       "anchor": {
         "x": 5.262602459016393,
-        "y": 5.0379610655737705
+        "y": 5.013985655737705
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.894529808534819,
-        "y": 5.875255574145811
+        "x": 4.039856557377049,
+        "y": 6.0928790983606556
       },
       "isLocked": false,
       "linkedName": "UpperRightReef"
     },
     {
       "anchor": {
-        "x": 1.1508196721311474,
+        "x": 1.151,
         "y": 7.075870901639344
       },
       "prevControl": {
-        "x": 1.8820696721311476,
+        "x": 1.88225,
         "y": 6.872079918032787
       },
       "nextControl": null,
@@ -45,7 +45,7 @@
     "rotation": 125.00000000000001
   },
   "reversed": false,
-  "folder": null,
+  "folder": "UpperReefPaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 59.99999999999999

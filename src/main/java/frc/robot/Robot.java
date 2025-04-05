@@ -87,11 +87,11 @@ public class Robot extends LoggedRobot {
 
     m_robotContainer = new RobotContainer();
     setupSmartDashboard();
-    LEDPattern red = LEDPattern.solid(Color.kRed);
-    LEDPattern blue = LEDPattern.solid(Color.kBlue);
     AddressableLED m_led = new AddressableLED(9);
     AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(50);
     AddressableLEDBufferView m_top = m_ledBuffer.createView(22, 29);
+    LEDPattern red = LEDPattern.solid(Color.kDarkRed);
+    LEDPattern blue = LEDPattern.solid(Color.kNavy);
     m_led.setLength(m_ledBuffer.getLength());
     m_led.setData(m_ledBuffer);
     m_led.start();

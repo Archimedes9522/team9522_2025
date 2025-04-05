@@ -11,7 +11,57 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "UpperMidCage"
+                  "pathName": "LowerMidCageBackRight"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "setLevel3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "runIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LowerBackRightCoral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "setFeederStation"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "reverseIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LowerCoralReefFrontLeft"
                 }
               },
               {
@@ -24,41 +74,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "runIntake"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "UpperRightCoral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "setFeederStation"
-                }
-              }
-            ]
+            "name": "runIntake"
           }
         }
       ]

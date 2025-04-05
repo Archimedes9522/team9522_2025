@@ -29,6 +29,7 @@ public class DriverAssistCommands {
   // Standard offsets for alignment
   private static final double REEF_DISTANCE_OFFSET = Units.inchesToMeters(6.5);
   private static final double CORAL_DISTANCE_OFFSET = Units.inchesToMeters(4);
+  private static final double PROCESSOR_DISTANCE_OFFSET = Units.inchesToMeters(10);
   private static final double ONE_INCH = Units.inchesToMeters(1);
 
   // Path constraints for different alignment scenarios
@@ -39,6 +40,12 @@ public class DriverAssistCommands {
       4.0); // Max angular acceleration in rad/s^2
 
   private static final PathConstraints CORAL_ALIGNMENT_CONSTRAINTS = new PathConstraints(
+      3.0, // Max velocity in m/s
+      4.0, // Max acceleration in m/s^2
+      3.0, // Max angular velocity in rad/s
+      4.0); // Max angular acceleration in rad/s^2
+
+  private static final PathConstraints PROCESSOR_ALIGNMENT_CONSTRAINTS = new PathConstraints(
       3.0, // Max velocity in m/s
       4.0, // Max acceleration in m/s^2
       3.0, // Max angular velocity in rad/s
@@ -104,5 +111,36 @@ public class DriverAssistCommands {
             }),
         Commands.waitSeconds(0.1))
         .withName("Auto Align Coral Station");
+  }
+
+  /**
+   * Creates a command to align the robot to a processor station tag.
+   *
+   * @param drive          The drive subsystem
+   * @param vision         The vision subsystem
+   * @param cancelSupplier A supplier that returns true when the command should be
+   *                       cancelled
+   * @return The alignment command
+   */
+  public static Command alignToProcessorTag(
+      DriveSubsystem drive, Vision vision, BooleanSupplier cancelSupplier) {
+    return Commands.sequence(
+        Commands.runOnce(
+            () -> {
+              Pose2d targetPose = drive.calculateTagOffset(
+                  vision.getProcessorTagPose(0, drive.getPose()),
+                  0,
+                  PROCESSOR_DISTANCE_OFFSET,
+                  false,
+                  true);
+
+              if (targetPose != null) {
+                AutoBuilder.pathfindToPose(targetPose, PROCESSOR_ALIGNMENT_CONSTRAINTS)
+                    .until(cancelSupplier)
+                    .schedule();
+              }
+            }),
+        Commands.waitSeconds(0.1))
+        .withName("Auto Align Processor");
   }
 }

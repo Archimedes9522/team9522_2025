@@ -82,6 +82,14 @@ public class RobotContainer {
                                                                                 .getLeftY()) > OIConstants.kDriveDeadband
                                                                 || Math.abs(m_driverController
                                                                                 .getRightX()) > OIConstants.kDriveDeadband));
+                NamedCommands.registerCommand("alignToProcessorTag",
+                                DriverAssistCommands.alignToProcessorTag(m_robotDrive, visionSubsystem,
+                                                () -> Math.abs(m_driverController
+                                                                .getLeftX()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getLeftY()) > OIConstants.kDriveDeadband
+                                                                || Math.abs(m_driverController
+                                                                                .getRightX()) > OIConstants.kDriveDeadband));
                 configureButtonBindings();
                 autoChooser = AutoBuilder.buildAutoChooser("None");
                 SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -166,20 +174,30 @@ public class RobotContainer {
                 // Auto align to right of reef tag (button press)
                 m_driverController
                                 .povRight()
-                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, true,
-                                                driverInputDetected));
+                                .onTrue(Commands.parallel(
+                                                DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, true,
+                                                                driverInputDetected),
+                                                m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2)));
 
                 // Auto align to left of reef tag (button press)
                 m_driverController
                                 .povLeft()
-                                .onTrue(DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem, false,
-                                                driverInputDetected));
+                                .onTrue(Commands.parallel(
+                                                DriverAssistCommands.alignToReefTag(m_robotDrive, visionSubsystem,
+                                                                false, driverInputDetected),
+                                                m_coralSubSystem.setSetpointCommand(Setpoint.kLevel2)));
 
                 // Auto align to coral station tag (button press)
                 m_driverController
                                 .povUp()
-                                .onTrue(DriverAssistCommands.alignToCoralTag(m_robotDrive, visionSubsystem,
-                                                driverInputDetected));
+                                .onTrue(Commands.parallel(
+                                                DriverAssistCommands.alignToCoralTag(m_robotDrive, visionSubsystem,
+                                                                driverInputDetected),
+                                                m_coralSubSystem.setSetpointCommand(Setpoint.kFeederStation)));
+
+                // Auto align to processor station tag (button press)
+                m_driverController.povDown().onTrue(DriverAssistCommands.alignToProcessorTag(m_robotDrive,
+                                visionSubsystem, driverInputDetected));
 
         }
 

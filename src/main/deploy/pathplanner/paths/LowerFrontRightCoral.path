@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.274590163934427,
-        "y": 3.000051229508196
+        "x": 5.262602459016393,
+        "y": 3.036014344262295
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.073790043845321,
-        "y": 3.368895059751684
+        "x": 4.358250000000001,
+        "y": 2.2407499999999994
       },
       "isLocked": false,
       "linkedName": "LowerRightReef"
     },
     {
       "anchor": {
-        "x": 1.1388319672131146,
-        "y": 0.9861168032786872
+        "x": 1.1115,
+        "y": 1.0025
       },
       "prevControl": {
-        "x": 0.8481187655456564,
-        "y": 0.8410686590295681
+        "x": 1.6867500000000002,
+        "y": 1.1389999999999998
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,7 +45,7 @@
     "rotation": -125.00000000000001
   },
   "reversed": false,
-  "folder": null,
+  "folder": "LowerReefPaths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -59.99999999999999

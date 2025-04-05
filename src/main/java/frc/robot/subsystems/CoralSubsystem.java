@@ -246,7 +246,7 @@ public class CoralSubsystem extends SubsystemBase {
   public Command runIntakeHoldCommand() {
     return Commands.sequence(
         Commands.runOnce(() -> this.setIntakePower(IntakeSetpoints.kForward)),
-        Commands.waitSeconds(2),
+        Commands.waitSeconds(1),
         Commands.runOnce(() -> this.setIntakePower(0.0))).withName("RunIntakeHold");
   }
 

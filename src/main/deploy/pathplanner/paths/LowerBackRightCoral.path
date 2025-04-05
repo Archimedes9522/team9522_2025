@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.0,
-        "y": 6.175
+        "x": 3.9975,
+        "y": 2.855
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.946684191954692,
-        "y": 6.174897853297955
+        "x": 3.55875,
+        "y": 2.1725
       },
       "isLocked": false,
-      "linkedName": "UpperMidCage"
+      "linkedName": "BackBottomLeftReef"
     },
     {
       "anchor": {
-        "x": 5.262602459016393,
-        "y": 5.013985655737705
+        "x": 1.1115,
+        "y": 1.0025
       },
       "prevControl": {
-        "x": 6.062770250321946,
-        "y": 5.61519349720416
+        "x": 1.6185,
+        "y": 1.2559999999999991
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "UpperRightReef"
+      "linkedName": "LowerCoralFeeder"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": -125.00000000000001
   },
   "reversed": false,
-  "folder": "UpperReefPaths",
+  "folder": "LowerReefPaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }
